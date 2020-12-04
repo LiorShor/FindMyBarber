@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/img"
     android:orientation="vertical"
-    tools:context=".activities.MainActivity">
+    tools:context="com.findmybarber.activities.MainActivity">
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"
@@ -41,13 +41,13 @@
         android:layout_height="217dp"
         android:layout_marginTop="82dp"
         android:backgroundTint="#fff"
+        android:contentDescription="@string/find_my_barber_logo"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/scissors"
-        tools:ignore="NestedWeights"
-        android:contentDescription="TODO" />
+        tools:ignore="NestedWeights" />
 
     <Button
         android:id="@+id/bt_register"

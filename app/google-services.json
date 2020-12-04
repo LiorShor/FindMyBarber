@@ -1,63 +1,41 @@
 {
   "project_info": {
-    "project_number": "1045170517826",
-    "firebase_url": "https://registration-1605506743555.firebaseio.com",
-    "project_id": "registration-1605506743555",
-    "storage_bucket": "registration-1605506743555.appspot.com"
+    "project_number": "606913807542",
+    "project_id": "findmybarber-5c44e",
+    "storage_bucket": "findmybarber-5c44e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1045170517826:android:5f2ab79314ed97329ffadb",
+        "mobilesdk_app_id": "1:606913807542:android:8ae964bf00555c91add217",
         "android_client_info": {
-          "package_name": "com.example.registration"
+          "package_name": "com.findmybarber"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
+          "client_id": "606913807542-4lcvj85b3cl7uoc1mm8913k5alvu5ev3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.findmybarber",
+            "certificate_hash": "cfba061ba965855b205c0f51f5c822a03e0990a6"
+          }
+        },
+        {
+          "client_id": "606913807542-qkm5nbtq1dbfr0aurhmd5r7db2n884qt.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAgJWUQb-1-Ha9BDB340gLZ2pt4EY5H7hw"
+          "current_key": "AIzaSyDnxYQqW8sKbSxmlwSZHt6Shi_nGk5yUe4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1045170517826:android:6ff493e9766e97429ffadb",
-        "android_client_info": {
-          "package_name": "com.findmybarber.registration"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAgJWUQb-1-Ha9BDB340gLZ2pt4EY5H7hw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
+              "client_id": "606913807542-qkm5nbtq1dbfr0aurhmd5r7db2n884qt.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
