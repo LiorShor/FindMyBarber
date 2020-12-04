@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Registration</string>
+    <string name="facebook_app_id">308286320163585</string>
+    <string name="fb_login_protocol_scheme">fb308286320163585</string>
+    <string name="search_for_a_barber">Search for a barber</string>
+    <string name="title_activity_registeration">Registeration</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="phone_number">Phone number</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="finish">Finish</string>
+    <string name="this_is_req">This is required.</string>
+    <string name="exist_acc">An account already exists with this email address.</string>
+    <string name="sign_up_for_findmybarber">Sign up for FindMyBarber</string>
+    <string name="illegal_name">Illegal first name</string>
+    <string name="illegal_surname">Illegal last name</string>
+    <string name="illegal_email">Illegal email</string>
+    <string name="illegal_phone">Illegal phone number</string>
+    <string name="sign_in_sign_up">Sign In / Sign Up</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="create_new_account">Create new account</string>
+
+</resources>
