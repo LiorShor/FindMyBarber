@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "1045170517826",
+    "firebase_url": "https://registration-1605506743555.firebaseio.com",
+    "project_id": "registration-1605506743555",
+    "storage_bucket": "registration-1605506743555.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045170517826:android:5f2ab79314ed97329ffadb",
+        "android_client_info": {
+          "package_name": "com.example.registration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgJWUQb-1-Ha9BDB340gLZ2pt4EY5H7hw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1045170517826:android:6ff493e9766e97429ffadb",
+        "android_client_info": {
+          "package_name": "com.findmybarber.registration"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgJWUQb-1-Ha9BDB340gLZ2pt4EY5H7hw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1045170517826-c4bdkajmf0i6efqr6tkeoumia5l6oc5q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
