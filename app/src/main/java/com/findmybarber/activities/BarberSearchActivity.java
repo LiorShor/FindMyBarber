@@ -79,6 +79,7 @@ public class BarberSearchActivity extends AppCompatActivity {
         }
 
         try {
+            assert fragmentClass != null;
             fragment = (Fragment) fragmentClass.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,6 +87,7 @@ public class BarberSearchActivity extends AppCompatActivity {
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
+        assert fragment != null;
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item has been done by NavigationView

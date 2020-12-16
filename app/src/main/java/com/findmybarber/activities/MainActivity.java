@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -20,19 +22,14 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
-import com.findmybarber.controller.UserType;
 import com.findmybarber.model.Customer;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -41,13 +38,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.findmybarber.activities.Registration.isEmailExist;
 import static com.findmybarber.activities.Registration.isValidEmailAddress;
@@ -62,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final String EMAIL = "email";
     private static final String USERNAME = "public_profile";
     private static final int RC_SIGN_IN = 9001;
+    private Handler mainHandler = new Handler();
     GoogleSignInClient mGoogleSignInClient;
     private Dialog registerDialog;
     private Dialog loginDialog;
@@ -94,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
 
     }
     public void facebookLogin(View view) {
@@ -210,33 +204,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void createUser(Customer customer){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Create a new user with a first and last name
-        Map<String, Object> user = new HashMap<>();
-        user.put("First name", customer.getUserName());
-        user.put("Last name", customer.getUserSurname());
-        user.put("Email", customer.getUserEmail());
-        user.put("Phone", customer.getUserPhoneNumber());
-//        user.put("Usertype", customer.getUserType());
-
-// Add a new document with a generated ID
-        db.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
-    }
+//    private void createUser(Customer customer){
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        // Create a new user with a first and last name
+//        Map<String, Object> user = new HashMap<>();
+//        user.put("First name", customer.getUserName());
+//        user.put("Last name", customer.getUserSurname());
+//        user.put("Email", customer.getUserEmail());
+//        user.put("Phone", customer.getUserPhoneNumber());
+////        user.put("Usertype", customer.getUserType());
+//
+//// Add a new document with a generated ID
+//        db.collection("users")
+//                .add(user)
+//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//
+//                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w(TAG, "Error adding document", e);
+//                    }
+//                });
+//    }
 
     private boolean validation(String firstName,String lastName,String password,String email,String phone){
         boolean flag = true;
@@ -295,8 +289,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showRegisterDialog(){
-        registerDialog.setContentView(R.layout.activity_registration);
-        registerDialog.show();
+        threadRunnable runnable = new threadRunnable();
+        new Thread(runnable).start();
+/*        registerDialog.setContentView(R.layout.activity_registration);
+        registerDialog.show();*/
 
     }
 
@@ -314,8 +310,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void showLoginDialog(View view) {
-        loginDialog.setContentView(R.layout.activity_sign_in);
-        loginDialog.show();
+        threadRunnable runnable = new threadRunnable();
+        new Thread(runnable).start();
+/*        loginDialog.setContentView(R.layout.activity_sign_in);
+        loginDialog.show();*/
     }
 
     public void loginFunc(View view) {
@@ -331,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 Toast.makeText(MainActivity.this, "Authentication succsess.",
                                         Toast.LENGTH_SHORT).show();
-                                FirebaseUser user = mAuth.getCurrentUser();
+//                                FirebaseUser user = mAuth.getCurrentUser();
                                 Intent intent = new Intent(MainActivity.this, BarberSearchActivity.class);
                                 startActivity(intent);
                                 // Sign in success, update UI with the signed-in user's information
@@ -374,6 +372,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+/*        threadRunnable runnable = new threadRunnable();
+        new Thread(runnable).start();*/
+
     }
     private void signOut() {
         mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
@@ -409,15 +410,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Toast.makeText(this, "HEYYYY", Toast.LENGTH_SHORT).show();
-            // Signed in successfully, show authenticated UI.
-//            updateUI(account);
+            Intent intent = new Intent(MainActivity.this, BarberSearchActivity.class);
+            intent.putExtra("Account",account);
+            startActivity(intent);
         } catch (ApiException e) {
             Log.w(TAG, "handleSignInResult:error", e);
             Toast.makeText(this, "fuck", Toast.LENGTH_SHORT).show();
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
-//            updateUI(null);
+
+        }
+    }
+
+    class threadRunnable implements Runnable{
+        @Override
+        public void run() {
+            Handler mainHandler = new Handler(Looper.getMainLooper());
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    loginDialog.setContentView(R.layout.activity_sign_in);
+                    loginDialog.show();
+/*                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);*/
+                }
+            });
         }
     }
 }
