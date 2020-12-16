@@ -78,6 +78,15 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.082" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/storeslist"
+            android:layout_width="match_parent"
+            android:layout_height="501dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view" />
+
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
