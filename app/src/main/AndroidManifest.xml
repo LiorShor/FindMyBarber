@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup" >
-        <!-- <activity android:name="com.findmybarber.activities.BarberSearchActivity" /> -->
-        <activity android:name=".activities.BarberSearchActivity" >
+        <activity android:name="com.findmybarber.activities.BarberSearchActivity" />
+        <activity android:name=".activities.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
