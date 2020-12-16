@@ -12,14 +12,23 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.findmybarber.R;
+import com.findmybarber.model.Store;
+import com.findmybarber.model.StoreAdapter;
 import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
 
 public class BarberSearchActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
+    private RecyclerView recyclerView;
+    private StoreAdapter adapter;
+    private ArrayList<Store> stores;
 
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
@@ -41,8 +50,19 @@ public class BarberSearchActivity extends AppCompatActivity {
         drawerToggle.setDrawerIndicatorEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this,R.color.white));
-
         drawerToggle.syncState();
+
+        recyclerView = findViewById(R.id.storeslist);
+        stores = new ArrayList<Store>();
+
+        // API REQ to fetch data
+        for (int i = 1; i <= 50; i++) {
+            stores.add(new Store("ID:" + i, "Store " + i, "Store location", 1.00, "desc", 123456));
+        }
+        adapter = new StoreAdapter(stores, this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
