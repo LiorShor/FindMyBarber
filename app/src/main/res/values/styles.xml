@@ -6,8 +6,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
     <style name="PauseDialog" parent="@android:style/Theme.Dialog">
-        <item name="android:windowAnimationStyle">@style/CardView.Light</item>
-    </style>
+        <item name="android:windowAnimationStyle">@style/CardView.Dark</item>
+    </style>/
 
     <style name="PauseDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/fade_in_anim</item>
