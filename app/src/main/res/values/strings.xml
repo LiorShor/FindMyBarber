@@ -37,6 +37,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="create_new_account">Create new account</string>
     <string name="find_my_barber_logo">Find my barber LOGO</string>
+    <string name="KEY">AIzaSyDnxYQqW8sKbSxmlwSZHt6Shi_nGk5yUe4</string>
 
 
     <!-- Used in NavigationDrawer -->

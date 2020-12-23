@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.findmybarber" >
+    package="com.findmybarber">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:node="remove" />
 
     <application
         android:allowBackup="true"
@@ -12,9 +16,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="AllowBackup" >
-        <activity android:name="com.findmybarber.activities.BarberSearchActivity" />
-        <activity android:name=".activities.MainActivity" >
+        android:usesCleartextTraffic="true"
+        tools:ignore="AllowBackup">
+<!--        <activity android:name=".activities.Navigator"></activity>-->
+<!--         <activity android:name="com.findmybarber.activities.BarberSearchActivity" />-->
+         <activity android:name="com.findmybarber.activities.LocationPermission" />
+         <activity android:name="com.findmybarber.activities.MainActivity" />
+
+        <activity android:name=".activities.Navigator">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".activities.BarberSearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,7 +49,7 @@
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
