@@ -1,21 +1,26 @@
 package com.findmybarber.activities;
 
-
-import android.annotation.SuppressLint;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.cardemulation.HostApduService;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -27,21 +32,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
 import com.findmybarber.model.Store;
 import com.findmybarber.model.StoreAdapter;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import java.util.Map;
+import java.util.UUID;
 
 public class BarberSearchActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
@@ -49,10 +51,14 @@ public class BarberSearchActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private RecyclerView recyclerView;
     private StoreAdapter adapter;
-    private ArrayList<Store> stores;
+
     private static final String TAG = "BarberSearchActivity";
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
+    private double longitude;
+    private double latitude;
+    private List<Store> storesList;
+//    LocationManager mLocationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +68,7 @@ public class BarberSearchActivity extends AppCompatActivity {
         // Set a Toolbar to replace the ActionBar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar()!=null)
+        if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         nvDrawer = (NavigationView) findViewById(R.id.nvView);
@@ -70,29 +76,77 @@ public class BarberSearchActivity extends AppCompatActivity {
         drawerToggle = setupDrawerToggle();
         drawerToggle.setDrawerIndicatorEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this,R.color.white));
+        drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.white));
         drawerToggle.syncState();
 
         recyclerView = findViewById(R.id.storeslist);
-        stores = new ArrayList<Store>();
+        storesList = new ArrayList<>();
+
+        find_Location(this);
+        Log.d(TAG, String.valueOf(latitude +","+ longitude));
+
 
         // API REQ to fetch data
-        for (int i = 1; i <= 50; i++) {
-            stores.add(new Store("ID:" + i, "Store " + i, "Store location", 1.00, "desc", 123456));
-        }
-        adapter = new StoreAdapter(stores, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        GetStores getStores = new GetStores(this);
+        getStores.execute();
 
-        if(!isLocationEnabled())
+        if (!isLocationEnabled())
             showAlert();
-        }
+    }
 
     private boolean isLocationEnabled() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context. LOCATION_SERVICE ) ;
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    public void find_Location(Context con) {
+
+        Log.d("Find Location", "in find_location");
+        String location_context = Context.LOCATION_SERVICE;
+        LocationManager locationManager = (LocationManager) con.getSystemService(location_context);
+        List<String> providers = locationManager.getProviders(true);
+        for (String provider : providers) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locationManager.requestLocationUpdates(provider, 1000, 0,
+                    new LocationListener() {
+
+                        public void onLocationChanged(Location location) {
+                        }
+
+                        public void onProviderDisabled(String provider) {
+                        }
+
+                        public void onProviderEnabled(String provider) {
+                        }
+
+                        public void onStatusChanged(String provider, int status,
+                                                    Bundle extras) {
+                        }
+                    });
+            Location location = locationManager.getLastKnownLocation(provider);
+            if (location != null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+            }
+        }
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
     }
 
     private void showAlert() {
@@ -114,7 +168,6 @@ public class BarberSearchActivity extends AppCompatActivity {
                 });
         dialog.show();
     }
-//    }
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
@@ -178,5 +231,83 @@ public class BarberSearchActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class GetStores extends AsyncTask<Void, Void, List<Store>> {
+
+        private Context context;
+
+        public GetStores(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(List<Store> result) {
+            super.onPostExecute(result);
+            storesList.addAll(result);
+
+            adapter = new StoreAdapter(storesList, context);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(linearLayoutManager);
+        }
+
+        @Override
+        protected List<Store> doInBackground(Void... params) {
+            List<Store> storesList = new ArrayList<>();
+
+            String stream;
+            String urlString = apiRequest();
+            APIReader http = new APIReader();
+            stream = http.getHTTPData(urlString);
+            try {
+                JSONObject object = new JSONObject(stream);
+                JSONArray jsonMainArray = object.getJSONArray("results");
+                for (int i = 0; i < jsonMainArray.length(); i++) {
+
+                    JSONObject jsonObject = jsonMainArray.getJSONObject(i);
+                    String ID = UUID.randomUUID().toString();
+                    String name = jsonObject.getString("name");
+                    String address = jsonObject.getString("vicinity");
+                    double rank;
+                    try { rank = Double.parseDouble(jsonObject.getString("rating"));
+                    }
+                    catch (JSONException ex) {
+                        rank = 0;
+                    }
+                    JSONObject geometry = jsonObject.getJSONObject("geometry");
+
+                    JSONObject location = geometry.getJSONObject("location");
+                    double latitude = location.getDouble("lat");
+                    double longitude = location.getDouble("lng");
+//                    String description
+//                    long phoneNumber
+                    Store store = new Store(ID,name, address, rank, "", 0, latitude, longitude);
+                    storesList.add(store);
+                }
+                return storesList;
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public String apiRequest()
+    {
+        StringBuilder sb = new StringBuilder();
+        String API_KEY = "key=AIzaSyCxfal1FttVVLWd6TOwgmQbyE4cZLfWoPA";
+        String API_LINK = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
+        String radius = "radius=3000&";
+        String type = "type=hair_care&";
+        String latitude = String.valueOf(this.latitude);
+        String longitude = String.valueOf(this.longitude);
+        sb.append(API_LINK).append(latitude).append(",").append(longitude).append("&").append(radius).append(type).append(API_KEY);
+
+        return sb.toString();
     }
 }
