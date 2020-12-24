@@ -9,9 +9,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.cardemulation.HostApduService;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -31,13 +33,17 @@ import com.findmybarber.R;
 import com.findmybarber.model.Store;
 import com.findmybarber.model.StoreAdapter;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class BarberSearchActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
@@ -45,12 +51,13 @@ public class BarberSearchActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private RecyclerView recyclerView;
     private StoreAdapter adapter;
-    private ArrayList<Store> stores;
+
     private static final String TAG = "BarberSearchActivity";
     // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
     private double longitude;
     private double latitude;
+    private List<Store> storesList;
 //    LocationManager mLocationManager;
 
     @Override
@@ -73,23 +80,15 @@ public class BarberSearchActivity extends AppCompatActivity {
         drawerToggle.syncState();
 
         recyclerView = findViewById(R.id.storeslist);
-        stores = new ArrayList<Store>();
+        storesList = new ArrayList<>();
 
         find_Location(this);
         Log.d(TAG, String.valueOf(latitude +","+ longitude));
 
 
         // API REQ to fetch data
-        GetStores getStores = new GetStores();
-
-        https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=31.9801373,34.7851257&radius=1500&type=hair_care&key=AIzaSyCxfal1FttVVLWd6TOwgmQbyE4cZLfWoPA
-        for (int i = 1; i <= 50; i++) {
-            stores.add(new Store("ID:" + i, "Store " + i, "Store location", 1.00, "desc", 123456));
-        }
-        adapter = new StoreAdapter(stores, this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        GetStores getStores = new GetStores(this);
+        getStores.execute();
 
         if (!isLocationEnabled())
             showAlert();
@@ -236,28 +235,61 @@ public class BarberSearchActivity extends AppCompatActivity {
 
     private class GetStores extends AsyncTask<Void, Void, List<Store>> {
 
+        private Context context;
+
+        public GetStores(Context context) {
+            this.context = context;
+        }
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
         }
         @Override
-        protected void onPostExecute(List<Store> storesList) {
-            super.onPostExecute(storesList);
+        protected void onPostExecute(List<Store> result) {
+            super.onPostExecute(result);
+            storesList.addAll(result);
+
+            adapter = new StoreAdapter(storesList, context);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(linearLayoutManager);
         }
 
         @Override
         protected List<Store> doInBackground(Void... params) {
+            List<Store> storesList = new ArrayList<>();
+
             String stream;
             String urlString = apiRequest();
             APIReader http = new APIReader();
             stream = http.getHTTPData(urlString);
             try {
                 JSONObject object = new JSONObject(stream);
-                JSONArray jsonMainArray = object.getJSONArray("list");
+                JSONArray jsonMainArray = object.getJSONArray("results");
                 for (int i = 0; i < jsonMainArray.length(); i++) {
 
-                }
+                    JSONObject jsonObject = jsonMainArray.getJSONObject(i);
+                    String ID = UUID.randomUUID().toString();
+                    String name = jsonObject.getString("name");
+                    String address = jsonObject.getString("vicinity");
+                    double rank;
+                    try { rank = Double.parseDouble(jsonObject.getString("rating"));
+                    }
+                    catch (JSONException ex) {
+                        rank = 0;
+                    }
+                    JSONObject geometry = jsonObject.getJSONObject("geometry");
 
+                    JSONObject location = geometry.getJSONObject("location");
+                    double latitude = location.getDouble("lat");
+                    double longitude = location.getDouble("lng");
+//                    String description
+//                    long phoneNumber
+                    Store store = new Store(ID,name, address, rank, "", 0, latitude, longitude);
+                    storesList.add(store);
+                }
+                return storesList;
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }

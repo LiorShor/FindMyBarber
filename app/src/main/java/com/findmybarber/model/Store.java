@@ -1,15 +1,31 @@
 package com.findmybarber.model;
 
-import android.media.Image;
-
 public class Store {
     private String id;
     private String name;
-    private String location;
+    private String address;
     private double rank;
-//    private Image image;
+//    private URL image;
     private String description;
     private long phoneNumber;
+    private double latitude;
+    private double longitude;
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
 
     public String getId() {
         return id;
@@ -27,12 +43,12 @@ public class Store {
         this.name = name;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public double getRank() {
@@ -42,14 +58,6 @@ public class Store {
     public void setRank(double rank) {
         this.rank = rank;
     }
-
-//    public Image getImage() {
-//        return image;
-//    }
-//
-//    public void setImage(Image image) {
-//        this.image = image;
-//    }
 
     public String getDescription() {
         return description;
@@ -67,14 +75,15 @@ public class Store {
         this.phoneNumber = phoneNumber;
     }
 
-    public Store(String id, String name, String location, double rank, String description, long phoneNumber) {
+    public Store(String id, String name, String address, double rank, String description, long phoneNumber, double latitude, double longitude) {
         this.id = id;
         this.name = name;
-        this.location = location;
+        this.address = address;
         this.rank = rank;
-//        this.image = image;
         this.description = description;
         this.phoneNumber = phoneNumber;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
 
