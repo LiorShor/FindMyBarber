@@ -40,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,6 +100,26 @@ public class BarberSearchActivity extends AppCompatActivity {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2, double el1, double el2) {
+
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
     }
 
     public void find_Location(Context con) {
@@ -282,13 +304,21 @@ public class BarberSearchActivity extends AppCompatActivity {
                     JSONObject geometry = jsonObject.getJSONObject("geometry");
 
                     JSONObject location = geometry.getJSONObject("location");
-                    double latitude = location.getDouble("lat");
-                    double longitude = location.getDouble("lng");
+                    double Latitude = location.getDouble("lat");
+                    double Longitude = location.getDouble("lng");
+                    double distance = Math.round(distance(Latitude, latitude, Longitude, longitude, 0, 0)/1000 *100.0)/100.0;
 //                    String description
 //                    long phoneNumber
-                    Store store = new Store(ID,name, address, rank, "", 0, latitude, longitude);
+                    Store store = new Store(ID,name, address, rank, address + ", " + distance +" km", 0, Latitude, Longitude, distance);
                     storesList.add(store);
                 }
+                Collections.sort(storesList, new Comparator<Store>() {
+                    @Override
+                    public int compare(Store lhs, Store rhs) {
+                        // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+                        return lhs.getDistance() > rhs.getDistance() ? 1 : (lhs.getDistance() < rhs.getDistance()) ? -1 : 0;
+                    }
+                });
                 return storesList;
             } catch (JSONException ex) {
                 ex.printStackTrace();
@@ -296,6 +326,7 @@ public class BarberSearchActivity extends AppCompatActivity {
             return null;
         }
     }
+
 
     public String apiRequest()
     {
