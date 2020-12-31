@@ -23,7 +23,7 @@ public class Navigator extends AppCompatActivity {
             startActivity(permission);
         }
         else {
-            Intent mainActivity = new Intent(this, MainActivity.class);
+            Intent mainActivity = new Intent(this, Login.class);
             startActivity(mainActivity);
         }
     }
