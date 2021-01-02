@@ -19,9 +19,9 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup">
 <!--        <activity android:name=".activities.Navigator"></activity>-->
-<!--         <activity android:name="com.findmybarber.activities.BarberSearchActivity" />-->
+<!--         <activity android:name="com.findmybarber.activities.MainActivity" />-->
          <activity android:name="com.findmybarber.activities.LocationPermission" />
-         <activity android:name="com.findmybarber.activities.MainActivity" />
+         <activity android:name="com.findmybarber.activities.Login" />
 
         <activity android:name=".activities.Navigator">
             <intent-filter>
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.BarberSearchActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

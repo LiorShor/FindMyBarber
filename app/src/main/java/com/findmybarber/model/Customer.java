@@ -8,13 +8,14 @@ public class Customer implements User {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String password;
 
-    public Customer(String firstName, String lastName, String email, String phoneNumber) {
+    public Customer(String firstName, String lastName, String email, String phoneNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-
+        this.password = password;
     }
 
     public Customer(){}
@@ -42,5 +43,10 @@ public class Customer implements User {
     @Override
     public UserType getUserType() {
         return UserType.Customer;
+    }
+
+    @Override
+    public String getUserPassword() {
+        return password;
     }
 }

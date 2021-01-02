@@ -1,418 +1,196 @@
 package com.findmybarber.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import android.app.Dialog;
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
+
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.findmybarber.R;
-import com.findmybarber.model.Customer;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.findmybarber.StoreDetails;
+import com.findmybarber.fragments.BarberSearch;
+import com.findmybarber.model.Store;
+import com.findmybarber.model.StoreAdapter;
+import com.google.android.material.navigation.NavigationView;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Arrays;
 
-import static com.findmybarber.activities.Registration.isEmailExist;
-import static com.findmybarber.activities.Registration.isValidEmailAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class MainActivity extends AppCompatActivity {
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+    private NavigationView nvDrawer;
+    private boolean flag = false;
+//    private RecyclerView recyclerView;
+//    private StoreAdapter adapter;
+//
+//    private static final String TAG = "BarberSearchActivity";
+//    // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
+    private ActionBarDrawerToggle drawerToggle;
+//    private double longitude;
+//    private double latitude;
+//    private List<Store> storesList;
+//    LocationManager mLocationManager;
+    private FragmentManager fragmentManager;
+    private static final String TAG = "MainActivity";
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private EditText et_FirstName,et_LastName, et_Password, et_Email , et_Phone;
-    private TextView txt_err1,txt_err2,txt_err3,txt_err4,txt_err5;
-    private static final String KEY = "MainActivityKey";
-    private static final String default_web_client_id = "606913807542-7cb6jf2dopalri7e2c4d3pkbf7n1sp5j.apps.googleusercontent.com";
-    private static final String TAG = "SignInActivity";
-    private static final String EMAIL = "email";
-    private static final String USERNAME = "public_profile";
-    private static final int RC_SIGN_IN = 9001;
-    private Handler mainHandler = new Handler();
-    GoogleSignInClient mGoogleSignInClient;
-    private Dialog registerDialog;
-    private Dialog loginDialog;
-    private CallbackManager callbackManager;
-    private FirebaseAuth mAuth;
-    SharedPreferences pref;
-    Customer customer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        pref = getPreferences(MODE_PRIVATE); // Private data saved on your device
-//        if (pref.getString("KeyUser",null) != null) {
-//            String email, password;
-//            email = pref.getString("KeyUser",null);
-//            password = pref.getString("KeyPassword",null);
-//            loginWithFireBase(email, password);
-//        }
-        mAuth = FirebaseAuth.getInstance();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(default_web_client_id)
-                .requestEmail()
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        callbackManager = CallbackManager.Factory.create();
-        SignInButton signInButton = findViewById(R.id.sign_in_with_google);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        loginDialog = new Dialog(this,R.style.PauseDialog);
-        loginDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        findViewById(R.id.sign_in_with_google).setOnClickListener(this);
+        Log.d(TAG, "onCreate: ");
+        // Set a Toolbar to replace the ActionBar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        setupDrawerContent(nvDrawer);
+        drawerToggle = setupDrawerToggle();
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.white));
+        drawerToggle.syncState();
 
-    }
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-    }
-    public void register(View view) {
-        boolean flag = false;
-        et_FirstName = registerDialog.findViewById(R.id.editTextFirstName);
-        et_LastName = registerDialog.findViewById(R.id.editTextLastName);
-        et_Password = registerDialog.findViewById(R.id.editTextPassword);
-        et_Email = registerDialog.findViewById(R.id.editTextEmailAddress);
-        et_Phone = registerDialog.findViewById(R.id.editTextPhone);
-        txt_err1 = registerDialog.findViewById(R.id.tv_error_1);
-        txt_err2 = registerDialog.findViewById(R.id.tv_error_2);
-        txt_err3 = registerDialog.findViewById(R.id.tv_error_3);
-        txt_err4 = registerDialog.findViewById(R.id.tv_error_4);
-        txt_err5 = registerDialog.findViewById(R.id.tv_error_5);
-        String firstName = et_FirstName.getText().toString();
-        String lastName = et_LastName.getText().toString();
-        String password = et_Password.getText().toString();
-        String email = et_Email.getText().toString();
-        String phone = et_Phone.getText().toString();
-        if (validation(firstName, lastName, password, email, phone)) {
-            customer = new Customer(firstName, lastName, email, phone);
-            flag = true;
-        }
-        if(flag) {
-//            createUser(customer);
-            mAuth.createUserWithEmailAndPassword(customer.getUserEmail(), password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(MainActivity.this, "Authentication succsess.",
-                                        Toast.LENGTH_SHORT).show();
-                                // Sign in success, update UI with the signed-in user's information
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                assert user != null;
-                                String uid = user.getUid();
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = database.getReference("customers").child(uid);
-                                myRef.setValue(customer);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(MainActivity.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            // ...
-                        }
-                    });
-            registerDialog.dismiss();
-        }
+        if (!isLocationEnabled())
+            showAlert();
+        loadFirstFragment();
     }
 
-    private boolean validation(String firstName,String lastName,String password,String email,String phone){
-        boolean flag = true;
-        if(firstName.matches(".*\\d.*")) {
-            et_FirstName.setBackgroundResource(R.drawable.red_error_style);
-            txt_err1.setText(R.string.illegal_name);
-            flag = false;
-        }
-        else if(firstName.equals("")) {
-            et_FirstName.setBackgroundResource(R.drawable.red_error_style);
-            txt_err1.setText(R.string.this_is_req);
-            flag = false;
-        }
-        if(lastName.matches(".*\\d.*")) {
-            et_LastName.setBackgroundResource(R.drawable.red_error_style);
-            txt_err2.setText(R.string.illegal_surname);
-            flag = false;
-        }
-        else if(lastName.equals("")) {
-            et_LastName.setBackgroundResource(R.drawable.red_error_style);
-            txt_err2.setText(R.string.this_is_req);
-            flag = false;
-        }
-        if(password.equals("")) {
-            et_Password.setBackgroundResource(R.drawable.red_error_style);
-            txt_err3.setText(R.string.this_is_req);
-            flag = false;
-        }
-        if(phone.equals("")) {
-            et_Phone.setBackgroundResource(R.drawable.red_error_style);
-            txt_err5.setText(R.string.this_is_req);
-            flag = false;
-        }
-        else if(phone.length() != 10) {
-            et_Phone.setBackgroundResource(R.drawable.red_error_style);
-            txt_err5.setText(R.string.illegal_phone);
-            flag = false;
-        }
-        if(email.equals("")) {
-            et_Email.setBackgroundResource(R.drawable.red_error_style);
-            txt_err4.setText(R.string.this_is_req);
-            flag = false;
-        }
-        else if (!isValidEmailAddress(email))
-        {
-            et_Email.setBackgroundResource(R.drawable.red_error_style);
-            txt_err4.setText(R.string.illegal_email);
-            flag = false;
-        }
-        if (isEmailExist())
-        {
-            et_Email.setBackgroundResource(R.drawable.red_error_style);
-            txt_err4.setText(R.string.exist_acc);
-        }
-        return flag;
+    private boolean isLocationEnabled() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
-
-    private void showRegisterDialog(){
-/*        threadRunnable runnable = new threadRunnable();
-        new Thread(runnable).start();*/
-        registerDialog.setContentView(R.layout.activity_registration);
-        registerDialog.show();
-
-    }
-
-    public void dismiss(View view) {
-        if(view.getId()==R.id.img_close)
-            registerDialog.dismiss();
-        else
-            loginDialog.dismiss();
-    }
-
-    public void backToLogin(View view) {
-        registerDialog.dismiss();
-        loginDialog.setContentView(R.layout.activity_sign_in);
-        loginDialog.show();
-    }
-
-    public void showLoginDialog(View view) {
-/*        threadRunnable runnable = new threadRunnable();
-        new Thread(runnable).start();*/
-        loginDialog.setContentView(R.layout.activity_sign_in);
-        loginDialog.show();
-//        goToRegister(view);
-    }
-
-    public void loginFunc(View view) {
-        EditText emailText = loginDialog.findViewById(R.id.etLoginEmailAddress);
-        String email = emailText.getText().toString();
-        EditText passwordText = loginDialog.findViewById(R.id.etLoginPassword);
-        String password = passwordText.getText().toString();
-        if(!checkIfEmpty(password,email))
-            loginWithFireBase(password,email);
-        else
-        {
-            emailText.setBackgroundResource(R.drawable.red_error_style);
-            passwordText.setBackgroundResource(R.drawable.red_error_style);
-        }
-    }
-
-    private boolean checkIfEmpty(String password,String email){
-        return (password.equals("")&&email.equals(""));
-    }
-
-    public void goToRegister(View view) {
-        loginDialog.dismiss();
-        registerDialog = new Dialog(this, R.style.PauseDialog);
-        registerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        showRegisterDialog();
-    }
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.sign_in_with_google) {
-            signIn();
-            // ...
-        }
-    }
-
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-/*        threadRunnable runnable = new threadRunnable();
-        new Thread(runnable).start();*/
-    }
-
-    private void signOut() {
-        mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                // [START_EXCLUDE]
-            }
-        });
-    }
-
-    public void loginWithFireBase(String email,String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+    private void showAlert() {
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Enable Location")
+                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-
-                            Toast.makeText(MainActivity.this, "Authentication succsess.",
-                                    Toast.LENGTH_SHORT).show();
-//                                FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(MainActivity.this, BarberSearchActivity.class);
-                            startActivity(intent);
-                            // Sign in success, update UI with the signed-in user's information
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d(TAG, "onComplete: ",task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // ...
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
+        dialog.show();
+    }
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
                     }
                 });
     }
-    public void facebookLogin(View view) {
-        LoginButton loginButton = findViewById(R.id.login_button);
-        loginButton.setPermissions(Arrays.asList(EMAIL,USERNAME));
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                handleFacebookAccessToken(loginResult.getAccessToken());
-            }
-
-            @Override
-            public void onCancel() {
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-            }
-        });
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        // NOTE: Make sure you pass in a valid toolbar reference.  ActionBarDrawToggle() does not require it
+        // and will not render the hamburger icon without it.
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.app_name,  R.string.action_settings);
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass = null; //TODO: DELETE
+        switch(menuItem.getItemId()) {
+            case R.id.nav_first_fragment:
+//                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
+                break;
+            case R.id.nav_second_fragment:
+//                fragmentClass = SecondFragment.class; //TODO: navigate to another activity
+                break;
+            case R.id.nav_third_fragment:
+//                fragmentClass = ThirdFragment.class; //TODO: navigate to another activity
+                break;
+            default:
+//                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
         }
-    }
-    AccessTokenTracker tokenTracker = new AccessTokenTracker() {
-        @Override
-        protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
-            if(currentAccessToken!=null)//user logged out
-                loadUserProfile((currentAccessToken));
-        }
-    };
 
-    //This func make GraphAPIRequest from Facebook site to get the Username
-    private void loadUserProfile(AccessToken accessToken){
-        final Intent intent = new Intent(this,BarberSearchActivity.class);
-        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-            @Override
-            public void onCompleted(JSONObject object, GraphResponse response) {
-                try {
-                    String firstName = object.getString("first_name");
-                    String lastName = object.getString("last_name");
-                    String email = object.getString("email");
-                    String id = object.getString("id");
-                    String[] array = {firstName,lastName,email,id};
-                    intent.putExtra(KEY,array);
-//                    startActivity(intent);
-//                    String imageUrl = "Https://graph.facebook.com/"+id+"/picture?type=normal";
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields","first_name,last_name,email,id");
-        request.setParameters(parameters);
-        request.executeAsync();
-    }
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(TAG, "handleFacebookAccessToken:" + token);
-
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-
-                        // ...
-                    }
-                });
-    }
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Intent intent = new Intent(MainActivity.this, BarberSearchActivity.class);
-            intent.putExtra("Account",account);
-            startActivity(intent);
-        } catch (ApiException e) {
-            Log.w(TAG, "handleSignInResult:error", e);
-            Toast.makeText(this, "fuck", Toast.LENGTH_SHORT).show();
-
+            assert fragmentClass != null;
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        assert fragment != null;
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
-    class threadRunnable implements Runnable{
-        @Override
-        public void run() {
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            mainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    loginDialog.setContentView(R.layout.activity_sign_in);
-                    loginDialog.show();
-/*                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                    startActivityForResult(signInIntent, RC_SIGN_IN);*/
-                }
-            });
-        }
+    public void goToStore(View view) {
+        // move to Store fragment
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.mainFrame, new FragmentScCalc()).addToBackStack(null).commit();
+
+    }
+
+    private void loadFirstFragment() {
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.flContent, new BarberSearch()).commit();
+    }
+
+    public void loadSecondFragment() {
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.flContent, new StoreDetails()).commit();
     }
 }

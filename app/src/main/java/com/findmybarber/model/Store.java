@@ -10,6 +10,15 @@ public class Store {
     private long phoneNumber;
     private double latitude;
     private double longitude;
+    private double distance;
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
 
     public double getLatitude() {
         return latitude;
@@ -75,7 +84,7 @@ public class Store {
         this.phoneNumber = phoneNumber;
     }
 
-    public Store(String id, String name, String address, double rank, String description, long phoneNumber, double latitude, double longitude) {
+    public Store(String id, String name, String address, double rank, String description, long phoneNumber, double latitude, double longitude, double distance) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -84,6 +93,7 @@ public class Store {
         this.phoneNumber = phoneNumber;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.distance = distance;
     }
 }
 

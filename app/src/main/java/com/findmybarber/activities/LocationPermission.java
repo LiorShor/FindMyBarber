@@ -1,14 +1,9 @@
 package com.findmybarber.activities;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.View;
 import android.widget.Toast;
 
@@ -34,7 +29,7 @@ public class LocationPermission extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (ContextCompat.checkSelfPermission(LocationPermission.this,
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Intent login = new Intent(this, MainActivity.class);
+                    Intent login = new Intent(this, Login.class);
                     startActivity(login);
                 }
             } else {

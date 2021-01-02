@@ -6,4 +6,5 @@ public interface User {
     String getUserSurname();
     String getUserPhoneNumber();
     UserType getUserType();
+    String getUserPassword();
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     app:layout_constraintCircleRadius="45dp"
-    tools:context="com.findmybarber.activities.MainActivity">
+    tools:context="com.findmybarber.activities.Login">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
