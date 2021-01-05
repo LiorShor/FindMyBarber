@@ -7,11 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
 import com.findmybarber.activities.MainActivity;
@@ -74,7 +72,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         Button detail_button = viewHolder.itemView.findViewById(R.id.bookNow);
         detail_button.setOnClickListener(view -> {
             MainActivity mainActivity = (MainActivity) mFragmentActivity;
-            mainActivity.loadSecondFragment();
+            mainActivity.loadStoreDetails();
         });
         SharedPreferences sharedPreferences;
         sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);

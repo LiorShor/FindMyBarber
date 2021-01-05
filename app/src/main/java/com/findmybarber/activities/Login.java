@@ -121,36 +121,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-
     }
 
-/*    public void ConnectToDatabase(){
-        try {
-
-            // SET CONNECTIONSTRING
-            Class.forName("com.mysql.jdbc.Driver");
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver ());
-            String username = "root";
-            String password = "1111";
-            Connection DbConn = DriverManager.getConnection("jdbc:jtds:sqlserver://35.197.253.88:3306/DATABASE;user=" + username + ";password=" + password);
-
-            Log.w("Connection","open");
-            Statement stmt = DbConn.createStatement();
-            ResultSet reset = stmt.executeQuery(" select * from users ");
-
-
-//            EditText num = (EditText) findViewById(R.id.displaymessage);
-//            num.setText(reset.getString(1));
-
-            DbConn.close();
-
-        } catch (Exception e)
-        {
-            Log.w("idan","" + e.getMessage());
-        }
-    }*/
     public void register(View view) {
         boolean flag = false;
         et_FirstName = registerDialog.findViewById(R.id.editTextFirstName);

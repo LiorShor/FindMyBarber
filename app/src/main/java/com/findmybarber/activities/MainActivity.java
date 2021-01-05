@@ -2,18 +2,12 @@ package com.findmybarber.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,41 +17,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.findmybarber.R;
 import com.findmybarber.fragments.StoreDetails;
 import com.findmybarber.fragments.BarberSearch;
-import com.findmybarber.model.GetLocation;
-import com.findmybarber.model.GetStores;
-import com.findmybarber.model.Store;
-import com.findmybarber.model.StoreAdapter;
 import com.google.android.material.navigation.NavigationView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
-    private NavigationView nvDrawer;
-    private boolean flag = false;
-    private StoreAdapter adapter;
-//
-//    private static final String TAG = "BarberSearchActivity";
-//    // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
-    private ActionBarDrawerToggle drawerToggle;
-//    private double longitude;
-//    private double latitude;
-    private List<Store> storesList;
-//    LocationManager mLocationManager;
     private FragmentManager fragmentManager;
     private static final String TAG = "MainActivity";
 
@@ -74,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mDrawer = findViewById(R.id.drawer_layout);
-        nvDrawer = findViewById(R.id.nvView);
+        NavigationView nvDrawer = findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
-        drawerToggle = setupDrawerToggle();
+        ActionBarDrawerToggle drawerToggle = setupDrawerToggle();
         drawerToggle.setDrawerIndicatorEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.white));
@@ -171,20 +138,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void goToStore(View view) {
-        // move to Store fragment
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.mainFrame, new FragmentScCalc()).addToBackStack(null).commit();
-
-    }
-
     private void loadFirstFragment() {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.flContent, new BarberSearch()).commit();
     }
 
-    public void loadSecondFragment() {
+    public void loadStoreDetails() {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContent, new StoreDetails()).addToBackStack(null).commit();

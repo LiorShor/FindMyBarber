@@ -110,22 +110,10 @@ public class StoreDetails extends Fragment {
         cal.setTimeZone(TimeZone.getTimeZone("GMT-1"));
         Date dt = new Date(System.currentTimeMillis());
         Date dt1 =  new Date(System.currentTimeMillis() + 1000 * 60 * 60);
-//        try{
-//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            dt  = dateFormat.parse(String.valueOf(System.currentTimeMillis()));
-//            dt1 =  dateFormat.parse(String.valueOf(System.currentTimeMillis())+ 1000 * 60 * 60) ;
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-
         try {
-//            dt = new (getDate(Stime,"yyyy-MM-dd HH:mm"));
-//            dt1 =  new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(String.valueOf(System.currentTimeMillis()+ 1000 * 60 * 60)) ;
-
             Calendar beginTime = Calendar.getInstance();
             cal.setTime(dt);
 
-            // beginTime.set(2013, 7, 25, 7, 30);
             beginTime.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
                     cal.get(Calendar.DATE), cal.get(Calendar.HOUR_OF_DAY),
                     cal.get(Calendar.MINUTE));
@@ -133,8 +121,6 @@ public class StoreDetails extends Fragment {
             Calendar endTime = Calendar.getInstance();
             cal.setTime(dt1);
 
-            // endTime.set(2013, 7, 25, 14, 30);
-            // endTime.set(year, month, day, hourOfDay, minute);
             endTime.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
                     cal.get(Calendar.DATE), cal.get(Calendar.HOUR_OF_DAY),
                     cal.get(Calendar.MINUTE));
@@ -150,7 +136,6 @@ public class StoreDetails extends Fragment {
             values.put(Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
             values.put(Events._ID, meeting_id);
             Uri uri =cr.insert(Events.CONTENT_URI, values);
-            long eventID = Long.parseLong(uri.getLastPathSegment());
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -161,7 +146,7 @@ public class StoreDetails extends Fragment {
         ContentResolver cr = this.getContext().getContentResolver();
         ContentValues values = new ContentValues();
         values.put(Attendees.ATTENDEE_NAME, "Idan");
-        values.put(Attendees.ATTENDEE_EMAIL, "idanpol1@gmail.com");
+        values.put(Attendees.ATTENDEE_EMAIL, "liorshor997@gmail.com");
         values.put(Attendees.ATTENDEE_RELATIONSHIP, Attendees.RELATIONSHIP_ATTENDEE);
         values.put(Attendees.ATTENDEE_TYPE, Attendees.TYPE_OPTIONAL);
 //            values.put(Attendees.ATTENDEE_STATUS, Attendees.ATT);
@@ -169,99 +154,4 @@ public class StoreDetails extends Fragment {
         Uri uri1 = cr.insert(Attendees.CONTENT_URI, values);
 
     }
-    /*  public static long pushAppointmentsToCalender(Activity curActivity, String title, String addInfo, String place, int status, long startDate, boolean needReminder, boolean needMailService) {
-     *//***************** Event: note(without alert) *******************//*
-
-        String eventUriString = "content://com.android.calendar/events";
-        ContentValues eventValues = new ContentValues();
-
-        eventValues.put("calendar_id", 1); // id, We need to choose from
-        // our mobile for primary
-        // its 1
-        eventValues.put("title", title);
-        eventValues.put("description", addInfo);
-        eventValues.put("eventLocation", place);
-
-        long endDate = startDate + 1000 * 60 * 60; // For next 1hr
-
-        eventValues.put("dtstart", startDate);
-        eventValues.put("dtend", endDate);
-
-        // values.put("allDay", 1); //If it is bithday alarm or such
-        // kind (which should remind me for whole day) 0 for false, 1
-        // for true
-        eventValues.put("eventStatus", status); // This information is
-        // sufficient for most
-        // entries tentative (0),
-        // confirmed (1) or canceled
-        // (2):
-        eventValues.put("eventTimezone", "UTC/GMT +2:00");
-        *//*Comment below visibility and transparency  column to avoid java.lang.IllegalArgumentException column visibility is invalid error *//*
-
-     *//*eventValues.put("visibility", 3); // visibility to default (0),
-                                        // confidential (1), private
-                                        // (2), or public (3):
-    eventValues.put("transparency", 0); // You can control whether
-                                        // an event consumes time
-                                        // opaque (0) or transparent
-                                        // (1).
-      *//*
-        eventValues.put("hasAlarm", 1); // 0 for false, 1 for true
-
-        Uri eventUri = curActivity.getApplicationContext().getContentResolver().insert(Uri.parse(eventUriString), eventValues);
-        long eventID = Long.parseLong(eventUri.getLastPathSegment());
-
-        if (needReminder) {
-            *//***************** Event: Reminder(with alert) Adding reminder to event *******************//*
-
-            String reminderUriString = "content://com.android.calendar/reminders";
-
-            ContentValues reminderValues = new ContentValues();
-
-            reminderValues.put("event_id", eventID);
-            reminderValues.put("minutes", 5); // Default value of the
-            // system. Minutes is a
-            // integer
-            reminderValues.put("method", 1); // Alert Methods: Default(0),
-            // Alert(1), Email(2),
-            // SMS(3)
-
-            Uri reminderUri = curActivity.getApplicationContext().getContentResolver().insert(Uri.parse(reminderUriString), reminderValues);
-        }
-
-        *//***************** Event: Meeting(without alert) Adding Attendies to the meeting *******************//*
-
-        if (needMailService) {
-            String attendeuesesUriString = "content://com.android.calendar/attendees";
-
-            *//********
-     * To add multiple attendees need to insert ContentValues multiple
-     * times
-     ***********//*
-            ContentValues attendeesValues = new ContentValues();
-
-            attendeesValues.put("event_id", eventID);
-            attendeesValues.put("attendeeName", "xxxxx"); // Attendees name
-            attendeesValues.put("attendeeEmail", "yyyy@gmail.com");// Attendee
-            // E
-            // mail
-            // id
-            attendeesValues.put("attendeeRelationship", 0); // Relationship_Attendee(1),
-            // Relationship_None(0),
-            // Organizer(2),
-            // Performer(3),
-            // Speaker(4)
-            attendeesValues.put("attendeeType", 0); // None(0), Optional(1),
-            // Required(2), Resource(3)
-            attendeesValues.put("attendeeStatus", 0); // NOne(0), Accepted(1),
-            // Decline(2),
-            // Invited(3),
-            // Tentative(4)
-
-            Uri attendeuesesUri = curActivity.getApplicationContext().getContentResolver().insert(Uri.parse(attendeuesesUriString), attendeesValues);
-        }
-
-        return eventID;
-
-    }*/
 }

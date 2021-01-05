@@ -1,6 +1,5 @@
 package com.findmybarber.model;
 
-
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import com.findmybarber.activities.APIReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
