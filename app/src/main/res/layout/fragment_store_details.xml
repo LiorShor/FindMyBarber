@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".StoreDetails">
-
     <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".activities.MainActivity">
 
         <CalendarView
             android:id="@+id/calendarView"
@@ -43,7 +40,7 @@
             app:layout_constraintVertical_bias="0.138" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/makeApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bt_finish_style"
@@ -55,5 +52,3 @@
             app:layout_constraintTop_toBottomOf="@+id/spinner2"
             app:layout_constraintVertical_bias="0.219" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</FrameLayout>

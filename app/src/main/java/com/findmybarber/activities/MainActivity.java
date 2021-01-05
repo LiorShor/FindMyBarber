@@ -1,25 +1,22 @@
 package com.findmybarber.activities;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -30,8 +27,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.findmybarber.R;
-import com.findmybarber.StoreDetails;
+import com.findmybarber.fragments.StoreDetails;
 import com.findmybarber.fragments.BarberSearch;
+import com.findmybarber.model.GetLocation;
+import com.findmybarber.model.GetStores;
 import com.findmybarber.model.Store;
 import com.findmybarber.model.StoreAdapter;
 import com.google.android.material.navigation.NavigationView;
@@ -43,21 +42,21 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private boolean flag = false;
-//    private RecyclerView recyclerView;
-//    private StoreAdapter adapter;
+    private StoreAdapter adapter;
 //
 //    private static final String TAG = "BarberSearchActivity";
 //    // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
     private ActionBarDrawerToggle drawerToggle;
 //    private double longitude;
 //    private double latitude;
-//    private List<Store> storesList;
+    private List<Store> storesList;
 //    LocationManager mLocationManager;
     private FragmentManager fragmentManager;
     private static final String TAG = "MainActivity";
@@ -69,22 +68,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: ");
         // Set a Toolbar to replace the ActionBar.
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+
+        mDrawer = findViewById(R.id.drawer_layout);
+        nvDrawer = findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
         drawerToggle = setupDrawerToggle();
         drawerToggle.setDrawerIndicatorEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.white));
         drawerToggle.syncState();
-
-        if (!isLocationEnabled())
+        if (!isLocationEnabled()) {
             showAlert();
-        loadFirstFragment();
+        }
+        else {
+            loadFirstFragment();
+        }
     }
 
     private boolean isLocationEnabled() {
@@ -97,17 +99,11 @@ public class MainActivity extends AppCompatActivity {
         dialog.setTitle("Enable Location")
                 .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " +
                         "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                    }
+                .setPositiveButton("Location Settings", (paramDialogInterface, paramInt) -> {
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    }
+                .setNegativeButton("Cancel", (paramDialogInterface, paramInt) -> {
                 });
         dialog.show();
     }
@@ -191,6 +187,6 @@ public class MainActivity extends AppCompatActivity {
     public void loadSecondFragment() {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.flContent, new StoreDetails()).commit();
+        fragmentTransaction.replace(R.id.flContent, new StoreDetails()).addToBackStack(null).commit();
     }
 }

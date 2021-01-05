@@ -2,6 +2,8 @@ package com.findmybarber.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,6 +41,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,6 +55,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.findmybarber.activities.Registration.isEmailExist;
 import static com.findmybarber.activities.Registration.isValidEmailAddress;
@@ -92,8 +101,22 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         loginDialog = new Dialog(this,R.style.PauseDialog);
         loginDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         findViewById(R.id.sign_in_with_google).setOnClickListener(this);
+        Dexter.withActivity(this).withPermissions(Manifest.permission.READ_CALENDAR,
+                Manifest.permission.WRITE_CALENDAR).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                if(accessToken!=null)
+                {
+                    //TODO:: need to transfer from activity to another in case of succsess on permissions
+                }
+            }
 
-        ConnectToDatabase();
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+            }
+        }).check();
+//        ConnectToDatabase();
     }
     @Override
     public void onStart() {
@@ -103,7 +126,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    public void ConnectToDatabase(){
+/*    public void ConnectToDatabase(){
         try {
 
             // SET CONNECTIONSTRING
@@ -127,7 +150,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         {
             Log.w("idan","" + e.getMessage());
         }
-    }
+    }*/
     public void register(View view) {
         boolean flag = false;
         et_FirstName = registerDialog.findViewById(R.id.editTextFirstName);
