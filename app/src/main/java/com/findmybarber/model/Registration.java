@@ -1,4 +1,4 @@
-package com.findmybarber.view.activities;
+package com.findmybarber.model;
 
 public class Registration {
     public static boolean isEmailExist() {

@@ -53,8 +53,8 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.findmybarber.view.activities.Registration.isEmailExist;
-import static com.findmybarber.view.activities.Registration.isValidEmailAddress;
+import static com.findmybarber.model.Registration.isEmailExist;
+import static com.findmybarber.model.Registration.isValidEmailAddress;
 
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
