@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
-import com.findmybarber.activities.MainActivity;
+import com.findmybarber.view.activities.MainActivity;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
     private final List<Store> mStores;
     private final FragmentActivity mFragmentActivity;
-    public StoreAdapter(FragmentActivity fragmentActivity, List<Store> stores, Context mContext) {
+    public StoreAdapter(FragmentActivity fragmentActivity, List<Store> stores) {
         this.mStores = stores;
         this.mFragmentActivity = fragmentActivity;
     }
@@ -34,21 +34,11 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         private final View itemView;
         public TextView storeName;
         public TextView description;
-        public Button detail_button;
         public ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             storeName = itemView.findViewById(R.id.storename);
             description = itemView.findViewById(R.id.description);
-//            detail_button = itemView.findViewById(R.id.bookNow);
-//            detail_button.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    MainActivity mainActivity = (MainActivity) getActivity();
-//                    assert mainActivity != null;
-//                    mainActivity.loadSecondFragment();
-//                }
-//            });
         }
     }
     // Create new views (invoked by the layout manager)

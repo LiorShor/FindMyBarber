@@ -1,8 +1,5 @@
 package com.findmybarber.model;
 
-import com.findmybarber.controller.User;
-import com.findmybarber.controller.UserType;
-
 public class Customer implements User {
     private String firstName;
     private String lastName;

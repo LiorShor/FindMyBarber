@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
-import com.findmybarber.activities.APIReader;
+import com.findmybarber.view.activities.APIReader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

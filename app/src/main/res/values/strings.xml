@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">FindMyBarber</string>
-    <string name="facebook_app_id">807830663115714</string>
-    <string name="fb_login_protocol_scheme">fb807830663115714</string>
+    <string name="facebook_app_id">157899575786908</string>
+    <string name="fb_login_protocol_scheme">fb157899575786908</string>
     <string name="search_for_a_barber">Search for a barber</string>
     <string name="title_activity_registeration">Registeration</string>
 

@@ -1,4 +1,4 @@
-package com.findmybarber.activities;
+package com.findmybarber.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,15 +50,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.findmybarber.activities.Registration.isEmailExist;
-import static com.findmybarber.activities.Registration.isValidEmailAddress;
+import static com.findmybarber.view.activities.Registration.isEmailExist;
+import static com.findmybarber.view.activities.Registration.isValidEmailAddress;
 
 
 public class Login extends AppCompatActivity implements View.OnClickListener {

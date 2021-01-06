@@ -1,4 +1,4 @@
-package com.findmybarber.activities;
+package com.findmybarber.view.activities;
 
 import java.io.BufferedReader;
 import java.io.IOException;

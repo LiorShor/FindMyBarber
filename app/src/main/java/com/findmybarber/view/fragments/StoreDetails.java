@@ -1,6 +1,5 @@
-package com.findmybarber.fragments;
+package com.findmybarber.view.fragments;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +16,6 @@ import android.widget.TextView;
 
 import com.findmybarber.R;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -92,20 +89,9 @@ public class StoreDetails extends Fragment {
         });
         return view;
     }
-    public static String getDate(long milliSeconds, String dateFormat)
-    {
-        // Create a DateFormatter object for displaying date in specified format.
-        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-
-        // Create a calendar object that will convert the date and time value in milliseconds to date.
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(milliSeconds);
-        return formatter.format(calendar.getTime());
-    }
 
     public void SyncEvent(long id, int meeting_id, String EventName,
                           long Stime, String Description) {
-
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getTimeZone("GMT-1"));
         Date dt = new Date(System.currentTimeMillis());
@@ -113,21 +99,16 @@ public class StoreDetails extends Fragment {
         try {
             Calendar beginTime = Calendar.getInstance();
             cal.setTime(dt);
-
             beginTime.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
                     cal.get(Calendar.DATE), cal.get(Calendar.HOUR_OF_DAY),
                     cal.get(Calendar.MINUTE));
-
             Calendar endTime = Calendar.getInstance();
             cal.setTime(dt1);
-
             endTime.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
                     cal.get(Calendar.DATE), cal.get(Calendar.HOUR_OF_DAY),
                     cal.get(Calendar.MINUTE));
-
             ContentResolver cr = this.getContext().getContentResolver();
             ContentValues values = new ContentValues();
-
             values.put(Events.DTSTART, beginTime.getTimeInMillis());
             values.put(Events.DTEND, endTime.getTimeInMillis());
             values.put(Events.TITLE, EventName);
@@ -135,7 +116,7 @@ public class StoreDetails extends Fragment {
             values.put(Events.CALENDAR_ID, id);
             values.put(Events.EVENT_TIMEZONE, TimeZone.getDefault().getID());
             values.put(Events._ID, meeting_id);
-            Uri uri =cr.insert(Events.CONTENT_URI, values);
+            cr.insert(Events.CONTENT_URI, values);
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -149,9 +130,8 @@ public class StoreDetails extends Fragment {
         values.put(Attendees.ATTENDEE_EMAIL, "liorshor997@gmail.com");
         values.put(Attendees.ATTENDEE_RELATIONSHIP, Attendees.RELATIONSHIP_ATTENDEE);
         values.put(Attendees.ATTENDEE_TYPE, Attendees.TYPE_OPTIONAL);
-//            values.put(Attendees.ATTENDEE_STATUS, Attendees.ATT);
         values.put(Attendees.EVENT_ID, 1);
-        Uri uri1 = cr.insert(Attendees.CONTENT_URI, values);
+        cr.insert(Attendees.CONTENT_URI, values);
 
     }
 }

@@ -1,4 +1,4 @@
-package com.findmybarber.activities;
+package com.findmybarber.view.activities;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -18,8 +18,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.findmybarber.R;
-import com.findmybarber.fragments.StoreDetails;
-import com.findmybarber.fragments.BarberSearch;
+import com.findmybarber.view.fragments.StoreDetails;
+import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {

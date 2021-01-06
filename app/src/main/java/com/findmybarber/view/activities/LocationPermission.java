@@ -1,4 +1,4 @@
-package com.findmybarber.activities;
+package com.findmybarber.view.activities;
 
 import android.Manifest;
 import android.content.Intent;

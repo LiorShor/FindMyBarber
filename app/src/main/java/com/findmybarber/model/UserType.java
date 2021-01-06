@@ -1,3 +1,3 @@
-package com.findmybarber.controller;
+package com.findmybarber.model;
 
 public enum UserType{Customer,Admin}
