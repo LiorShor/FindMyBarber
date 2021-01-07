@@ -15,6 +15,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -26,6 +34,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
 import com.findmybarber.model.Customer;
+import com.findmybarber.model.Registration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -41,17 +50,21 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 import static com.findmybarber.model.Registration.isEmailExist;
 import static com.findmybarber.model.Registration.isValidEmailAddress;
@@ -72,12 +85,16 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Dialog loginDialog;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
+    private List<Customer> usersList;
     SharedPreferences pref;
     Customer customer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        usersList = new ArrayList<>();
+//        volleyPost();
+        volleyGetUsersList();
         pref = getPreferences(MODE_PRIVATE); // Private data saved on your device
 //        if (pref.getString("KeyUser",null) != null) {
 //            String email, password;
@@ -85,7 +102,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //            password = pref.getString("KeyPassword",null);
 //            loginWithFireBase(email, password);
 //        }
-        mAuth = FirebaseAuth.getInstance();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(default_web_client_id)
                 .requestEmail()
@@ -119,6 +135,35 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onStart();
     }
 
+
+
+    public void volleyGetUsersList() {
+        String url = "http://192.168.1.27:45457/api/user/getuserslist";
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                        usersList.add(customer);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+
     public void register(View view) {
         boolean flag = false;
         et_FirstName = registerDialog.findViewById(R.id.editTextFirstName);
@@ -137,34 +182,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String email = et_Email.getText().toString();
         String phone = et_Phone.getText().toString();
         if (validation(firstName, lastName, password, email, phone)) {
-            customer = new Customer(firstName, lastName, email, phone, password);
+//            customer = new Customer(firstName, lastName, email, phone, password);
             flag = true;
         }
         if(flag) {
 //            createUser(customer);
-            mAuth.createUserWithEmailAndPassword(customer.getUserEmail(), password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(Login.this, "Authentication succsess.",
-                                        Toast.LENGTH_SHORT).show();
-                                // Sign in success, update UI with the signed-in user's information
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                assert user != null;
-                                String uid = user.getUid();
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = database.getReference("customers").child(uid);
-                                myRef.setValue(customer);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(Login.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            // ...
-                        }
-                    });
+            Registration.volleyPost(getApplicationContext(),firstName, lastName, password, email, phone);
             registerDialog.dismiss();
         }
     }
@@ -259,13 +282,18 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String email = emailText.getText().toString();
         EditText passwordText = loginDialog.findViewById(R.id.etLoginPassword);
         String password = passwordText.getText().toString();
-        if(!checkIfEmpty(password,email))
-            loginWithFireBase(password,email);
-        else
-        {
+        if(!checkIfEmpty(password,email) && checkCredentials(email, password)) {
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            startActivity(intent);
+        }
+        else {
             emailText.setBackgroundResource(R.drawable.red_error_style);
             passwordText.setBackgroundResource(R.drawable.red_error_style);
         }
+    }
+
+    private boolean checkCredentials(String email, String password) {
+        return usersList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password));
     }
 
     private boolean checkIfEmpty(String password,String email){

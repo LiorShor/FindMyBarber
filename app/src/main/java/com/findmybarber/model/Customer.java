@@ -1,40 +1,46 @@
 package com.findmybarber.model;
 
 public class Customer implements User {
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String phoneNumber;
-    private String password;
+    private String ID;
+    private String FirstName;
+    private String LastName;
+    private String Email;
+    private String PhoneNumber;
+    private String Password;
 
-    public Customer(String firstName, String lastName, String email, String phoneNumber, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.password = password;
+    public Customer(String id, String firstName, String lastName, String email, String phoneNumber, String password) {
+        this.ID = id;
+        this.FirstName = firstName;
+        this.LastName = lastName;
+        this.Email = email;
+        this.PhoneNumber = phoneNumber;
+        this.Password = password;
     }
 
     public Customer(){}
 
+    public String getID() {
+        return ID;
+    }
+
     @Override
     public String getUserEmail() {
-        return email;
+        return Email;
     }
 
     @Override
     public String getUserName() {
-        return firstName;
+        return FirstName;
     }
 
     @Override
     public String getUserSurname() {
-        return lastName;
+        return LastName;
     }
 
     @Override
     public String getUserPhoneNumber() {
-        return phoneNumber;
+        return PhoneNumber;
     }
 
     @Override
@@ -44,6 +50,6 @@ public class Customer implements User {
 
     @Override
     public String getUserPassword() {
-        return password;
+        return Password;
     }
 }

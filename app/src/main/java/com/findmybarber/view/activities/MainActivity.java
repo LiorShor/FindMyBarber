@@ -55,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
             loadFirstFragment();
         }
     }
+    @Override
+    public void onBackPressed() {
+        this.moveTaskToBack(true);
+    }
 
     private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
