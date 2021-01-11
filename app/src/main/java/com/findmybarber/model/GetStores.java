@@ -11,6 +11,14 @@ import android.os.Bundle;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +31,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     private double selfLatitude;
     private double selfLongitude;
     private String urlString;
+    public static List<Store> storesList = new ArrayList<>();
 
     public GetStores(final Context context){
         this.context = context;
@@ -32,6 +41,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     protected void onPreExecute() {
         super.onPreExecute();
         urlString = find_Location(context);
+        getStoresList();
     }
 
     @Override
@@ -155,5 +165,30 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         return Math.sqrt(distance);
     }
 
+    public void getStoresList() {
+        String url = "http://192.168.43.202:45455/api/store/getstoreslist";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
 
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
+                        storesList.add(store);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
 }

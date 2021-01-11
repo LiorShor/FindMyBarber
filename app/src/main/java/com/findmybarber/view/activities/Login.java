@@ -32,6 +32,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
+import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
 import com.findmybarber.model.Customer;
 import com.findmybarber.model.Registration;
@@ -84,13 +85,17 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
     public static List<Customer> usersList = new ArrayList<>();
+    public static List<Customer> customersList = new ArrayList<>();
+    public static List<Admin> adminsList = new ArrayList<>();
     SharedPreferences pref;
     Customer customer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getUsersList();
+        getCustomersList();
+        getAdminsList();
+        getMixedList();
         pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE); // Private data saved on your device
         if (pref.getString("KeyUser",null) != null) {
             Intent intent = new Intent(Login.this, MainActivity.class);
@@ -125,8 +130,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //        ConnectToDatabase();
     }
 
-    public void getUsersList() {
-        String url = "http://192.168.1.27:45455/api/user/getuserslist";
+    public void getMixedList() {
+        usersList.addAll(customersList);
+        usersList.addAll(adminsList);
+    }
+
+    public void getCustomersList() {
+        String url = "http://192.168.43.202:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -138,6 +148,33 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         JSONObject jsonObject = response.getJSONObject(i);
                         Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
                         usersList.add(customer);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void getAdminsList() {
+        String url = "http://192.168.43.202:45455/api/user/getUserAdminsList";
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Admin admin = gson.fromJson(jsonObject.toString(), Admin.class);
+                        adminsList.add(admin);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
