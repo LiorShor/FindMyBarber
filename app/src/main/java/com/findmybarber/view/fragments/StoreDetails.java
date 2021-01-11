@@ -3,26 +3,35 @@ package com.findmybarber.view.fragments;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.net.Uri;
+import android.content.res.Resources;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.findmybarber.R;
+import com.findmybarber.model.Book;
+import com.findmybarber.view.activities.MainActivity;
 
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.provider.CalendarContract.*;
+import static com.findmybarber.view.activities.MainActivity.bookingsList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,6 +44,8 @@ public class StoreDetails extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private TimePicker timePicker;
+    private CalendarView calendarView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -79,12 +90,30 @@ public class StoreDetails extends Fragment {
         TextView textView = view.findViewById(R.id.storeName);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("store", MODE_PRIVATE);
         textView.setText(sharedPreferences.getString("storeName", null));
-        Button createApp = view.findViewById(R.id.makeApp);
-        createApp.setOnClickListener(new View.OnClickListener() {
+        Button createAppointment = view.findViewById(R.id.makeAppointment);
+        timePicker = view.findViewById(R.id.datePicker1);
+        calendarView = view.findViewById(R.id.calendarView);
+        setTimePickerInterval(timePicker);
+        Calendar calendar = Calendar.getInstance();
+        calendarView.setOnDateChangeListener((calendarView, year, month, dayOfMonth) ->
+                        calendar.set(year,month,dayOfMonth)
+        );
+        createAppointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SyncEvent(1,1,"Shlomo",System.currentTimeMillis(),"ya sexy");
                 addAttendees();
+
+                calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+                calendar.set(Calendar.MINUTE, timePicker.getMinute() * 15);
+                calendar.set(Calendar.SECOND, 0);
+
+                UUID id = UUID.randomUUID();
+                Book book = new Book(id.toString(), id.toString(), "","",calendar);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                bookingsList.add(book);
+                assert mainActivity != null;
+                mainActivity.postBookAppointment(book);
             }
         });
         return view;
@@ -132,6 +161,22 @@ public class StoreDetails extends Fragment {
         values.put(Attendees.ATTENDEE_TYPE, Attendees.TYPE_OPTIONAL);
         values.put(Attendees.EVENT_ID, 1);
         cr.insert(Attendees.CONTENT_URI, values);
+    }
 
+    private void setTimePickerInterval(TimePicker timePicker) {
+        try {
+            int TIME_PICKER_INTERVAL = 15;
+            NumberPicker minutePicker = (NumberPicker) timePicker.findViewById(Resources.getSystem().getIdentifier(
+                    "minute", "id", "android"));
+            minutePicker.setMinValue(0);
+            minutePicker.setMaxValue((60 / TIME_PICKER_INTERVAL) - 1);
+            List<String> displayedValues = new ArrayList<String>();
+            for (int i = 0; i < 60; i += TIME_PICKER_INTERVAL) {
+                displayedValues.add(String.format("%02d", i));
+            }
+            minutePicker.setDisplayedValues(displayedValues.toArray(new String[0]));
+        } catch (Exception e) {
+            Log.e("", "Exception: " + e);
+        }
     }
 }

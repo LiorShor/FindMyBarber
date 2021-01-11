@@ -7,18 +7,18 @@
         android:layout_height="match_parent"
         tools:context=".view.activities.MainActivity">
 
-        <CalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="292dp"
-            android:layout_height="306dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/storeName"
-            app:layout_constraintVertical_bias="0.105" />
+    <CalendarView
+        android:id="@+id/calendarView"
+        android:layout_width="292dp"
+        android:layout_height="306dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/storeName"
+        app:layout_constraintVertical_bias="0.0" />
 
-        <TextView
+    <TextView
             android:id="@+id/storeName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,26 +29,36 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.025" />
 
-        <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="147dp"
-            android:layout_height="63dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/calendarView"
-            app:layout_constraintVertical_bias="0.138" />
+<!--        <Spinner-->
+<!--            android:id="@+id/spinner2"-->
+<!--            android:layout_width="147dp"-->
+<!--            android:layout_height="63dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/calendarView"-->
+<!--            app:layout_constraintVertical_bias="0.138" />-->
+    <TimePicker
+        android:id="@+id/datePicker1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView"
+        app:layout_constraintVertical_bias="0.138" />
 
-        <Button
-            android:id="@+id/makeApp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bt_finish_style"
-            android:text="Book"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.501"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/spinner2"
-            app:layout_constraintVertical_bias="0.219" />
+    <Button
+        android:id="@+id/makeAppointment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bt_finish_style"
+        android:text="@string/book"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/datePicker1"
+        app:layout_constraintVertical_bias="0.219" />
     </androidx.constraintlayout.widget.ConstraintLayout>

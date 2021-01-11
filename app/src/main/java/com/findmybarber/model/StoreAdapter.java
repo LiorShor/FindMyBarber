@@ -1,6 +1,7 @@
 package com.findmybarber.model;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,23 +55,24 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        // Get element from your dataset at this position and replace the
+        // contents of the view with that element
         Store store = mStores.get(position);
         viewHolder.storeName.setText(store.getName());
         viewHolder.description.setText(store.getDescription());
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
-        Button detail_button = viewHolder.itemView.findViewById(R.id.bookNow);
-        detail_button.setOnClickListener(view -> {
+        Button bookNow = viewHolder.itemView.findViewById(R.id.bookNow);
+        bookNow.setOnClickListener(view -> {
             MainActivity mainActivity = (MainActivity) mFragmentActivity;
             mainActivity.loadStoreDetails();
+            int pos = viewHolder.getAdapterPosition();
+            mainActivity.getBookingList(mStores.get(pos).getId());
+            SharedPreferences sharedPreferences;
+            sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("storeName" , mStores.get(pos).getName());
+            editor.putString("storeID" , mStores.get(pos).getId());
+            editor.apply();
         });
-        SharedPreferences sharedPreferences;
-        sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("storeName" , store.getName());
-        editor.putString("storeID" , store.getId());
-        editor.apply();
-
     }
     // Return the size of your dataset (invoked by the layout manager)
     @Override

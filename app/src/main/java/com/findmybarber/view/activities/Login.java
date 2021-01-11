@@ -21,7 +21,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
@@ -33,6 +32,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
+import com.findmybarber.model.Book;
 import com.findmybarber.model.Customer;
 import com.findmybarber.model.Registration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -48,8 +48,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -85,23 +83,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Dialog loginDialog;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
-    private List<Customer> usersList;
+    public static List<Customer> usersList = new ArrayList<>();
     SharedPreferences pref;
     Customer customer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        usersList = new ArrayList<>();
-//        volleyPost();
-        volleyGetUsersList();
-        pref = getPreferences(MODE_PRIVATE); // Private data saved on your device
-//        if (pref.getString("KeyUser",null) != null) {
-//            String email, password;
-//            email = pref.getString("KeyUser",null);
-//            password = pref.getString("KeyPassword",null);
-//            loginWithFireBase(email, password);
-//        }
+        getUsersList();
+        pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE); // Private data saved on your device
+        if (pref.getString("KeyUser",null) != null) {
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            startActivity(intent);
+        }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(default_web_client_id)
                 .requestEmail()
@@ -130,15 +124,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }).check();
 //        ConnectToDatabase();
     }
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
-
-
-    public void volleyGetUsersList() {
-        String url = "http://192.168.1.27:45457/api/user/getuserslist";
+    public void getUsersList() {
+        String url = "http://192.168.1.27:45455/api/user/getuserslist";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -164,6 +152,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         requestQueue.add(jsonArrayRequest);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
     public void register(View view) {
         boolean flag = false;
         et_FirstName = registerDialog.findViewById(R.id.editTextFirstName);
@@ -187,7 +180,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
         if(flag) {
 //            createUser(customer);
-            Registration.volleyPost(getApplicationContext(),firstName, lastName, password, email, phone);
+            Registration.volleyPost(getApplicationContext(),firstName, lastName, email, phone, password);
+            customer = new Customer(firstName, lastName, email, phone, password);
+            usersList.add(customer);
             registerDialog.dismiss();
         }
     }
@@ -240,7 +235,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             txt_err4.setText(R.string.illegal_email);
             flag = false;
         }
-        if (isEmailExist())
+        if (isEmailExist(email))
         {
             et_Email.setBackgroundResource(R.drawable.red_error_style);
             txt_err4.setText(R.string.exist_acc);
@@ -283,6 +278,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         EditText passwordText = loginDialog.findViewById(R.id.etLoginPassword);
         String password = passwordText.getText().toString();
         if(!checkIfEmpty(password,email) && checkCredentials(email, password)) {
+            pref = getApplicationContext().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+                editor.putString("KeyUser",email);
+                editor.putString("KeyPassword",password);
+                editor.apply();
+
             Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);
         }
