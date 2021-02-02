@@ -11,6 +11,9 @@ import com.findmybarber.R;
 import com.findmybarber.model.GetStores;
 import com.findmybarber.model.Store;
 import com.findmybarber.model.StoreAdapter;
+import com.findmybarber.view.activities.Login;
+import com.findmybarber.view.activities.MainActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -68,6 +71,11 @@ public class BarberSearch extends Fragment {
         GetStores getStores = new GetStores(getContext());
         try {
             storesList = getStores.execute().get();
+        for (Store store : Login.dbStoresList) {
+            if(Math.round(getStores.distance(store.getLatitude(),getStores.getSelfLatitude(),store.getLongitude(),getStores.getSelfLongitude(),0,0)/ 1000 * 100.0) / 100.0 < 3000) {
+                storesList.add(store);
+            }
+        }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

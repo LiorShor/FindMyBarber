@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.findmybarber.view.activities.MainActivity;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -41,7 +42,6 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     protected void onPreExecute() {
         super.onPreExecute();
         urlString = find_Location(context);
-        getStoresList();
     }
 
     @Override
@@ -163,32 +163,5 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         double height = el1 - el2;
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         return Math.sqrt(distance);
-    }
-
-    public void getStoresList() {
-        String url = "http://192.168.43.202:45455/api/store/getstoreslist";
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    Gson gson = new Gson();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
-                        storesList.add(store);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
     }
 }

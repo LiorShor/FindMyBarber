@@ -30,6 +30,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
+import com.findmybarber.model.Store;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.navigation.NavigationView;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
+//    public static List<Store> dbStoresList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: ");
         // Set a Toolbar to replace the ActionBar.
+//        getStoresList();
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.43.202:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.43.202:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -157,6 +160,33 @@ public class MainActivity extends AppCompatActivity {
         });
         requestQueue.add(jsonObjectRequest);
     }
+
+//    public void getStoresList() {
+//        String url = "http://192.168.1.27:45455/api/store/getStoresList";
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//
+//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+//            @Override
+//            public void onResponse(JSONArray response) {
+//                try {
+//                    Gson gson = new Gson();
+//                    for (int i = 0; i < response.length(); i++) {
+//                        JSONObject jsonObject = response.getJSONObject(i);
+//                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
+//                        dbStoresList.add(store);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                error.printStackTrace();
+//            }
+//        });
+//        requestQueue.add(jsonArrayRequest);
+//    }
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(

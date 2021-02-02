@@ -109,7 +109,7 @@ public class StoreDetails extends Fragment {
                 calendar.set(Calendar.SECOND, 0);
 
                 UUID id = UUID.randomUUID();
-                Book book = new Book(id.toString(), id.toString(), "","",calendar);
+                Book book = new Book(id.toString(), "a06bf5c3-d5fc-4d42-86fd-1ac3d6bab436", "lior@gmail.com","c@gmail.com",calendar);
                 MainActivity mainActivity = (MainActivity) getActivity();
                 bookingsList.add(book);
                 assert mainActivity != null;

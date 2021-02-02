@@ -36,6 +36,7 @@ import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
 import com.findmybarber.model.Customer;
 import com.findmybarber.model.Registration;
+import com.findmybarber.model.Store;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -87,12 +88,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public static List<Customer> usersList = new ArrayList<>();
     public static List<Customer> customersList = new ArrayList<>();
     public static List<Admin> adminsList = new ArrayList<>();
+    public static List<Store> dbStoresList = new ArrayList<>();
+
     SharedPreferences pref;
     Customer customer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+            getStoresList();
         getCustomersList();
         getAdminsList();
         getMixedList();
@@ -130,13 +134,40 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //        ConnectToDatabase();
     }
 
+    public void getStoresList() {
+        String url = "http://192.168.1.27:45455/api/store/getStoresList";
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
+                        dbStoresList.add(store);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+
     public void getMixedList() {
         usersList.addAll(customersList);
         usersList.addAll(adminsList);
     }
 
     public void getCustomersList() {
-        String url = "http://192.168.43.202:45455/api/user/getUserClientsList";
+        String url = "http://192.168.1.27:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -163,7 +194,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void getAdminsList() {
-        String url = "http://192.168.43.202:45455/api/user/getUserAdminsList";
+        String url = "http://192.168.1.27:45455/api/user/getUserAdminsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
