@@ -71,11 +71,6 @@ public class BarberSearch extends Fragment {
         GetStores getStores = new GetStores(getContext());
         try {
             storesList = getStores.execute().get();
-        for (Store store : Login.dbStoresList) {
-            if(Math.round(getStores.distance(store.getLatitude(),getStores.getSelfLatitude(),store.getLongitude(),getStores.getSelfLongitude(),0,0)/ 1000 * 100.0) / 100.0 < 3000) {
-                storesList.add(store);
-            }
-        }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

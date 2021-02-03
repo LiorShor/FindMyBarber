@@ -1,99 +1,106 @@
 package com.findmybarber.model;
 
 public class Store {
-    private String id;
-    private String name;
-    private String address;
-    private double rank;
-//    private URL image;
-    private String description;
-    private long phoneNumber;
-    private double latitude;
-    private double longitude;
-    private double distance;
-
+    private String ID;
+    private String Name;
+    private String Address;
+    private double Rank;
+    private String Image;
+    private String Description;
+    private long PhoneNumber;
+    private double Latitude;
+    private double Longitude;
+    private double Distance;
     public double getDistance() {
-        return distance;
+        return Distance;
+    }
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        this.Image = image;
     }
 
     public void setDistance(double distance) {
-        this.distance = distance;
+        this.Distance = distance;
     }
 
     public double getLatitude() {
-        return latitude;
+        return Latitude;
     }
 
     public void setLatitude(double latitude) {
-        this.latitude = latitude;
+        this.Latitude = latitude;
     }
 
     public double getLongitude() {
-        return longitude;
+        return Longitude;
     }
 
     public void setLongitude(double longitude) {
-        this.longitude = longitude;
+        this.Longitude = longitude;
     }
 
-    public String getId() {
-        return id;
+    public String getID() {
+        return ID;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     public String getName() {
-        return name;
+        return Name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     public String getAddress() {
-        return address;
+        return Address;
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        this.Address = address;
     }
 
     public double getRank() {
-        return rank;
+        return Rank;
     }
 
     public void setRank(double rank) {
-        this.rank = rank;
+        this.Rank = rank;
     }
 
     public String getDescription() {
-        return description;
+        return Description;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.Description = description;
     }
 
     public long getPhoneNumber() {
-        return phoneNumber;
+        return PhoneNumber;
     }
 
     public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.PhoneNumber = phoneNumber;
     }
 
-    public Store(String id, String name, String address, double rank, String description, long phoneNumber, double latitude, double longitude, double distance) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.rank = rank;
-        this.description = description;
-        this.phoneNumber = phoneNumber;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.distance = distance;
+    public Store(String id, String name, String address, double rank,String image, String description, long phoneNumber, double latitude, double longitude) {
+        this.ID = id;
+        this.Name = name;
+        this.Address = address;
+        this.Rank = rank;
+        this.Image = image;
+        this.Description = description;
+        this.PhoneNumber = phoneNumber;
+        this.Latitude = latitude;
+        this.Longitude = longitude;
     }
 }
 

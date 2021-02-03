@@ -17,6 +17,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 import com.google.gson.Gson;
 
@@ -26,6 +27,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.findmybarber.view.activities.Login.dbStoresList;
 
 public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     private final Context context;
@@ -42,6 +45,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     protected void onPreExecute() {
         super.onPreExecute();
         urlString = find_Location(context);
+        getStoresList();
     }
 
     @Override
@@ -56,6 +60,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         APIReader http = new APIReader();
         stream = http.getHTTPData(urlString);
         try {
+
             JSONObject object = new JSONObject(stream);
             JSONArray jsonMainArray = object.getJSONArray("results");
             for (int i = 0; i < jsonMainArray.length(); i++) {
@@ -74,7 +79,8 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
                 double storeLatitude = location.getDouble("lat");
                 double storeLongitude = location.getDouble("lng");
                 double distance = Math.round(distance(storeLatitude, getSelfLatitude(), storeLongitude, getSelfLongitude(), 0, 0) / 1000 * 100.0) / 100.0;
-                Store store = new Store(ID, name, address, rank, distance + " km", 0, storeLatitude, storeLongitude, distance);
+                Store store = new Store(ID, name, address, rank,"", distance + " km", 0, storeLatitude, storeLongitude);
+                store.setDistance(distance);
                 storesList.add(store);
             }
             return storesList;
@@ -164,4 +170,37 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         return Math.sqrt(distance);
     }
+
+    public void getStoresList() {
+        String url = "http://192.168.1.2:45455/api/store/getStoresList";
+        RequestQueue requestQueue = Volley.newRequestQueue(this.context);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
+                        dbStoresList.add(store);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (Store store : Login.dbStoresList) {
+                    if(Math.round(distance(store.getLatitude(),getSelfLatitude(),store.getLongitude(),getSelfLongitude(),0,0)/ 1000 * 100.0) / 100.0 < 3000) {
+                        storesList.add(store);
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+
 }

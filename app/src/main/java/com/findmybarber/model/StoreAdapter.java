@@ -1,7 +1,6 @@
 package com.findmybarber.model;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,12 +64,12 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
             MainActivity mainActivity = (MainActivity) mFragmentActivity;
             mainActivity.loadStoreDetails();
             int pos = viewHolder.getAdapterPosition();
-            mainActivity.getBookingList(mStores.get(pos).getId());
+            mainActivity.getBookingList(mStores.get(pos).getID());
             SharedPreferences sharedPreferences;
             sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("storeName" , mStores.get(pos).getName());
-            editor.putString("storeID" , mStores.get(pos).getId());
+            editor.putString("storeID" , mStores.get(pos).getID());
             editor.apply();
         });
     }
