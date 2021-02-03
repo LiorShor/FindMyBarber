@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.findmybarber.R;
+import com.findmybarber.model.GetDBStoresList;
 import com.findmybarber.model.GetStores;
 import com.findmybarber.model.Store;
 import com.findmybarber.model.StoreAdapter;
@@ -17,6 +18,8 @@ import com.findmybarber.view.activities.MainActivity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static com.findmybarber.view.activities.Login.dbStoresList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,8 +72,17 @@ public class BarberSearch extends Fragment {
         // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
         List<Store> storesList = new ArrayList<>();
         GetStores getStores = new GetStores(getContext());
+        GetDBStoresList getDBStoresList = new GetDBStoresList();
         try {
             storesList = getStores.execute().get();
+            dbStoresList.addAll(getDBStoresList.execute().get());
+            for (Store store : dbStoresList) {
+                double distance = Math.round(GetStores.distance(store.getLatitude(), getStores.getSelfLatitude(), store.getLongitude(), getStores.getSelfLongitude(), 0, 0) / 1000 * 100.0) / 100.0;
+                if (distance < 3) {
+                    store.setDescription(distance + " km");
+                    storesList.add(store);
+                }
+            }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

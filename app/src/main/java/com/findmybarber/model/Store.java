@@ -7,7 +7,7 @@ public class Store {
     private double Rank;
     private String Image;
     private String Description;
-    private long PhoneNumber;
+    private String PhoneNumber;
     private double Latitude;
     private double Longitude;
     private double Distance;
@@ -83,15 +83,15 @@ public class Store {
         this.Description = description;
     }
 
-    public long getPhoneNumber() {
+    public String getPhoneNumber() {
         return PhoneNumber;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.PhoneNumber = phoneNumber;
     }
 
-    public Store(String id, String name, String address, double rank,String image, String description, long phoneNumber, double latitude, double longitude) {
+    public Store(String id, String name, String address, double rank,String image, String description, String phoneNumber, double latitude, double longitude) {
         this.ID = id;
         this.Name = name;
         this.Address = address;

@@ -45,7 +45,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     protected void onPreExecute() {
         super.onPreExecute();
         urlString = find_Location(context);
-        getStoresList();
+//        getStoresList();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
                 double storeLatitude = location.getDouble("lat");
                 double storeLongitude = location.getDouble("lng");
                 double distance = Math.round(distance(storeLatitude, getSelfLatitude(), storeLongitude, getSelfLongitude(), 0, 0) / 1000 * 100.0) / 100.0;
-                Store store = new Store(ID, name, address, rank,"", distance + " km", 0, storeLatitude, storeLongitude);
+                Store store = new Store(ID, name, address, rank,"", distance + " km", "0", storeLatitude, storeLongitude);
                 store.setDistance(distance);
                 storesList.add(store);
             }
@@ -143,8 +143,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     }
 
 
-    public static String apiRequest(double selfLatitude, double selfLongitude)
-    {
+    public static String apiRequest(double selfLatitude, double selfLongitude) {
         StringBuilder sb = new StringBuilder();
         String API_KEY = "key=AIzaSyCxfal1FttVVLWd6TOwgmQbyE4cZLfWoPA";
         String API_LINK = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
@@ -156,7 +155,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         return sb.toString();
     }
 
-    public double distance(double lat1, double lat2, double lon1,
+    public static double distance(double lat1, double lat2, double lon1,
                            double lon2, double el1, double el2) {
         final int R = 6371; // Radius of the earth
         double latDistance = Math.toRadians(lat2 - lat1);
@@ -170,37 +169,4 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
         return Math.sqrt(distance);
     }
-
-    public void getStoresList() {
-        String url = "http://192.168.1.2:45455/api/store/getStoresList";
-        RequestQueue requestQueue = Volley.newRequestQueue(this.context);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    Gson gson = new Gson();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
-                        dbStoresList.add(store);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                for (Store store : Login.dbStoresList) {
-                    if(Math.round(distance(store.getLatitude(),getSelfLatitude(),store.getLongitude(),getSelfLongitude(),0,0)/ 1000 * 100.0) / 100.0 < 3000) {
-                        storesList.add(store);
-                    }
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
-    }
-
 }
