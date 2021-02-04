@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
+import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 
 import java.util.List;
@@ -61,16 +62,20 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         viewHolder.description.setText(store.getDescription());
         Button bookNow = viewHolder.itemView.findViewById(R.id.bookNow);
         bookNow.setOnClickListener(view -> {
-            MainActivity mainActivity = (MainActivity) mFragmentActivity;
-            mainActivity.loadStoreDetails();
-            int pos = viewHolder.getAdapterPosition();
-            mainActivity.getBookingList(mStores.get(pos).getID());
-            SharedPreferences sharedPreferences;
-            sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("storeName" , mStores.get(pos).getName());
-            editor.putString("storeID" , mStores.get(pos).getID());
-            editor.apply();
+            if (Login.dbStoresList.contains(mStores.get(viewHolder.getAdapterPosition()))) {
+                MainActivity mainActivity = (MainActivity) mFragmentActivity;
+                mainActivity.loadStoreDetails();
+                int pos = viewHolder.getAdapterPosition();
+                mainActivity.getBookingList(mStores.get(pos).getID());
+                SharedPreferences sharedPreferences;
+                sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("storeName", mStores.get(pos).getName());
+                editor.putString("storeID", mStores.get(pos).getID());
+                editor.apply();
+            } else {
+                //TODO get from google the store number and call it
+            }
         });
     }
     // Return the size of your dataset (invoked by the layout manager)

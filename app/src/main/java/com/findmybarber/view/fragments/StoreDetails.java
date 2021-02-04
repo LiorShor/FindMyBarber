@@ -19,7 +19,10 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.findmybarber.R;
+import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
+import com.findmybarber.model.Store;
+import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 
 import java.util.ArrayList;
@@ -89,6 +92,7 @@ public class StoreDetails extends Fragment {
         View view = inflater.inflate(R.layout.fragment_store_details, container, false);
         TextView textView = view.findViewById(R.id.storeName);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("store", MODE_PRIVATE);
+        SharedPreferences sharedUserPreferences = getActivity().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
         textView.setText(sharedPreferences.getString("storeName", null));
         Button createAppointment = view.findViewById(R.id.makeAppointment);
         timePicker = view.findViewById(R.id.datePicker1);
@@ -101,15 +105,25 @@ public class StoreDetails extends Fragment {
         createAppointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SyncEvent(1,1,"Shlomo",System.currentTimeMillis(),"ya sexy");
-                addAttendees();
+                String storeID = sharedPreferences.getString("storeID", null);
+                String storeName = sharedPreferences.getString("storeName", null);
+                String clientEmail = sharedUserPreferences.getString("KeyUser", null);
+                Admin admin = null;
+                for (Admin admin1:Login.adminsList) {
+                    if(admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))
+                        admin = admin1;
+                }
+                String storeEmail = admin.getUserEmail();
+                SyncEvent(1,1,"Appointment at "+ storeName,System.currentTimeMillis(),
+                        "You have a new apppointment at "+ storeName + "\nDon't be late !!!");
+                addAttendees(admin.getUserEmail(),admin.getUserName() +" "+ admin.getUserSurname());
 
                 calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
                 calendar.set(Calendar.MINUTE, timePicker.getMinute() * 15);
                 calendar.set(Calendar.SECOND, 0);
 
                 UUID id = UUID.randomUUID();
-                Book book = new Book(id.toString(), "a06bf5c3-d5fc-4d42-86fd-1ac3d6bab436", "lior@gmail.com","c@gmail.com",calendar);
+                Book book = new Book(id.toString(), storeID , clientEmail, storeEmail,calendar);
                 MainActivity mainActivity = (MainActivity) getActivity();
                 bookingsList.add(book);
                 assert mainActivity != null;
@@ -124,7 +138,7 @@ public class StoreDetails extends Fragment {
         Calendar cal = Calendar.getInstance();
         cal.setTimeZone(TimeZone.getTimeZone("GMT-1"));
         Date dt = new Date(System.currentTimeMillis());
-        Date dt1 =  new Date(System.currentTimeMillis() + 1000 * 60 * 60);
+        Date dt1 =  new Date(System.currentTimeMillis() + 1000 * 60 * 15);
         try {
             Calendar beginTime = Calendar.getInstance();
             cal.setTime(dt);
@@ -152,11 +166,11 @@ public class StoreDetails extends Fragment {
         }
     }
 
-    public void addAttendees(){
+    public void addAttendees(String barberEmail,String barberName){
         ContentResolver cr = this.getContext().getContentResolver();
         ContentValues values = new ContentValues();
-        values.put(Attendees.ATTENDEE_NAME, "Idan");
-        values.put(Attendees.ATTENDEE_EMAIL, "liorshor997@gmail.com");
+        values.put(Attendees.ATTENDEE_NAME, barberName);
+        values.put(Attendees.ATTENDEE_EMAIL, barberEmail);
         values.put(Attendees.ATTENDEE_RELATIONSHIP, Attendees.RELATIONSHIP_ATTENDEE);
         values.put(Attendees.ATTENDEE_TYPE, Attendees.TYPE_OPTIONAL);
         values.put(Attendees.EVENT_ID, 1);
