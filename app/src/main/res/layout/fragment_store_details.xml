@@ -32,7 +32,7 @@
     <GridView
         android:id="@+id/gridview"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="200dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
@@ -65,9 +65,10 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="@+id/gridview"
+        app:layout_constraintTop_toBottomOf="@+id/gridview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"/>
 
     <Button
         android:id="@+id/makeAppointment"
@@ -82,5 +83,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/gridview"
         app:layout_constraintVertical_bias="0.123"
+        android:layout_marginTop="10dp"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

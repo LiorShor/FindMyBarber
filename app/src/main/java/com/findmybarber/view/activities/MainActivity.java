@@ -82,9 +82,26 @@ public class MainActivity extends AppCompatActivity {
             loadFirstFragment();
         }
     }
+    public Fragment getVisibleFragment(){
+        FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        if(fragments != null){
+            for(Fragment fragment : fragments){
+                if(fragment != null && fragment.isVisible())
+                    return fragment;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void onBackPressed() {
-        this.moveTaskToBack(true);
+        Fragment f = getVisibleFragment();
+        if(!(f instanceof BarberSearch))
+            super.onBackPressed();
+        else {
+            this.moveTaskToBack(true);
+        }
     }
 
     private boolean isLocationEnabled() {
@@ -260,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void loadFirstFragment() {
+    public void loadFirstFragment() {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.flContent, new BarberSearch()).commit();

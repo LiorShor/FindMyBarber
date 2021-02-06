@@ -74,13 +74,14 @@ public class ButtonAdapter extends BaseAdapter
         button.setText(timeSlots[position]);
 
 
-//        button.setOnClickListener(view -> {
-//            SharedPreferences sharedPreferences;
-//            sharedPreferences =  mContext.getSharedPreferences("button", MODE_PRIVATE);
-//            SharedPreferences.Editor editor = sharedPreferences.edit();
-//            editor.putString("timeSlot", button.getText().toString());
-//            editor.apply();
-//        });
+        button.setOnClickListener(view -> {
+            SharedPreferences sharedPreferences;
+            sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("timeSlot", button.getText().toString());
+            editor.apply();
+            button.setBackgroundResource(R.drawable.selectedtimeslot);
+        });
 //
 //        button.setOnClickListener(new View.OnClickListener()
 //        {

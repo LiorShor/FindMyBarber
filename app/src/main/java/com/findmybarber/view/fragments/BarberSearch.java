@@ -72,6 +72,7 @@ public class BarberSearch extends Fragment {
         // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
         List<Store> storesList = new ArrayList<>();
         GetStores getStores = new GetStores(getContext());
+        dbStoresList.removeAll(dbStoresList);
         GetDBStoresList getDBStoresList = new GetDBStoresList();
         try {
             storesList = getStores.execute().get();

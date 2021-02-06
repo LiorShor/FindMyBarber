@@ -18,6 +18,7 @@ import android.widget.GridView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
@@ -94,6 +95,7 @@ public class StoreDetails extends Fragment {
         View view = inflater.inflate(R.layout.fragment_store_details, container, false);
         TextView textView = view.findViewById(R.id.storeName);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("store", MODE_PRIVATE);
+        SharedPreferences sharedBookPreferences = getActivity().getSharedPreferences("book", MODE_PRIVATE);
         SharedPreferences sharedUserPreferences = getActivity().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
         textView.setText(sharedPreferences.getString("storeName", null));
         Button createAppointment = view.findViewById(R.id.makeAppointment);
@@ -130,7 +132,9 @@ public class StoreDetails extends Fragment {
                 String storeID = sharedPreferences.getString("storeID", null);
                 String storeName = sharedPreferences.getString("storeName", null);
                 String clientEmail = sharedUserPreferences.getString("KeyUser", null);
-//                String time = sharedPreferences.getString("timeSlot", null);
+                String time = sharedBookPreferences.getString("timeSlot", null);
+                String hour = time.split(":",2)[0];
+                String minute = time.split(":",2)[1];
                 Admin admin = null;
                 for (Admin admin1:Login.adminsList) {
                     if(admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))
@@ -141,8 +145,8 @@ public class StoreDetails extends Fragment {
                         "You have a new apppointment at "+ storeName + "\nDon't be late !!!");
                 addAttendees(admin.getUserEmail(),admin.getUserName() +" "+ admin.getUserSurname());
 
-                calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
-                calendar.set(Calendar.MINUTE, timePicker.getMinute() * 15);
+                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
                 calendar.set(Calendar.SECOND, 0);
 
                 UUID id = UUID.randomUUID();
@@ -151,6 +155,8 @@ public class StoreDetails extends Fragment {
                 bookingsList.add(book);
                 assert mainActivity != null;
                 mainActivity.postBookAppointment(book);
+                Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
+                mainActivity.onBackPressed();
             }
         });
         return view;
