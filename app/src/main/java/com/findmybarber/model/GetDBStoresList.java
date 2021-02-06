@@ -24,7 +24,7 @@ public class GetDBStoresList  extends AsyncTask<Void, Void, List<Store>> {
 
     @Override
     protected List<Store> doInBackground(Void... voids) {
-        String url = "http://192.168.1.2:45455/api/store/getStoresList";
+        String url = "http://192.168.1.27:45455/api/store/getStoresList";
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
         List<Store> storesList = new ArrayList<>();
@@ -49,7 +49,7 @@ public class GetDBStoresList  extends AsyncTask<Void, Void, List<Store>> {
 
 /*
     public void getStoresList() {
-        String url = "http://192.168.1.2:45455/api/store/getStoresList";
+        String url = "http://192.168.1.27:45455/api/store/getStoresList";
         RequestQueue requestQueue = Volley.newRequestQueue(this.context);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {

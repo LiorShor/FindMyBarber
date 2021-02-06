@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 //    public void getStoresList() {
-//        String url = "http://192.168.1.2:45455/api/store/getStoresList";
+//        String url = "http://192.168.1.27:45455/api/store/getStoresList";
 //        RequestQueue requestQueue = Volley.newRequestQueue(this);
 //
 //        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.GridView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -21,6 +22,7 @@ import android.widget.TimePicker;
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
+import com.findmybarber.model.ButtonAdapter;
 import com.findmybarber.model.Store;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
@@ -95,19 +97,40 @@ public class StoreDetails extends Fragment {
         SharedPreferences sharedUserPreferences = getActivity().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
         textView.setText(sharedPreferences.getString("storeName", null));
         Button createAppointment = view.findViewById(R.id.makeAppointment);
-        timePicker = view.findViewById(R.id.datePicker1);
+
+        GridView gridview = view.findViewById(R.id.gridview);
+        gridview.setAdapter(new ButtonAdapter(getContext()));
+        gridview.setNumColumns(4);
+
+//        timePicker = view.findViewById(R.id.datePicker1);
+
         calendarView = view.findViewById(R.id.calendarView);
         setTimePickerInterval(timePicker);
         Calendar calendar = Calendar.getInstance();
         calendarView.setOnDateChangeListener((calendarView, year, month, dayOfMonth) ->
                         calendar.set(year,month,dayOfMonth)
         );
+
+//        Button button = gridview.findViewById(R.id.button);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                SharedPreferences sharedPreferences;
+//                sharedPreferences =  getContext().getSharedPreferences("button", MODE_PRIVATE);
+//                SharedPreferences.Editor editor = sharedPreferences.edit();
+//                editor.putString("timeSlot", button.getText().toString());
+//                editor.apply();
+//            }
+//        });
+
+
         createAppointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String storeID = sharedPreferences.getString("storeID", null);
                 String storeName = sharedPreferences.getString("storeName", null);
                 String clientEmail = sharedUserPreferences.getString("KeyUser", null);
+//                String time = sharedPreferences.getString("timeSlot", null);
                 Admin admin = null;
                 for (Admin admin1:Login.adminsList) {
                     if(admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))

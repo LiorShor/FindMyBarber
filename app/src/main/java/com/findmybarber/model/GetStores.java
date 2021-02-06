@@ -56,9 +56,9 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     @Override
     protected List<Store> doInBackground(Void... params) {
         List<Store> storesList = new ArrayList<>();
-        String stream;
-        APIReader http = new APIReader();
-        stream = http.getHTTPData(urlString);
+        String stream = "";
+//        APIReader http = new APIReader();
+//        stream = http.getHTTPData(urlString);
         try {
 
             JSONObject object = new JSONObject(stream);
@@ -86,8 +86,9 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
             return storesList;
         } catch (JSONException ex) {
             ex.printStackTrace();
+            return storesList;
         }
-        return null;
+//        return null;
     }
     public double getSelfLatitude() {
         return selfLatitude;
@@ -145,7 +146,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
 
     public static String apiRequest(double selfLatitude, double selfLongitude) {
         StringBuilder sb = new StringBuilder();
-        String API_KEY = "key=AIzaSyCxfal1FttVVLWd6TOwgmQbyE4cZLfWoPA";
+        String API_KEY = "key=AIzaSyBoNid_8AbvsVzffJxtz9ODguZRx8Hv6A0";
         String API_LINK = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
         String radius = "radius=3000&";
         String type = "type=hair_care&";
