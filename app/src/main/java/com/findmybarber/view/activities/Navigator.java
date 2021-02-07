@@ -1,4 +1,4 @@
-package com.findmybarber.activities;
+package com.findmybarber.view.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;

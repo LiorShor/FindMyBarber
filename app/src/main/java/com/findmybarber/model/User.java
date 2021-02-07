@@ -1,4 +1,4 @@
-package com.findmybarber.controller;
+package com.findmybarber.model;
 
 public interface User {
     String getUserEmail();

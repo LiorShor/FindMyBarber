@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/img"
     android:orientation="vertical"
-    tools:context="com.findmybarber.activities.Login">
+    tools:context=".view.activities.Login">
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

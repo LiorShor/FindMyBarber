@@ -1,15 +1,18 @@
 package com.findmybarber.model;
 
 
-import com.findmybarber.controller.User;
-import com.findmybarber.controller.UserType;
-
 public class Admin extends Customer implements User {
-    public Admin(String firstName, String lastName, String email, String phoneNumber, String password) {
+    private String StoreID;
+    public Admin(String firstName, String lastName, String email, String phoneNumber, String password, String storeID) {
         super(firstName, lastName, email, phoneNumber, password);
+        this.StoreID = storeID;
     }
 
     public Admin() {
+    }
+
+    public String getStoreID() {
+        return StoreID;
     }
 
     @Override

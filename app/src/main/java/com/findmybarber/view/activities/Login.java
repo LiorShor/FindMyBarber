@@ -1,7 +1,9 @@
-package com.findmybarber.activities;
+package com.findmybarber.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +15,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -23,7 +32,13 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
+import com.findmybarber.model.Admin;
+import com.findmybarber.model.Book;
 import com.findmybarber.model.Customer;
+import com.findmybarber.model.GetAdminList;
+import com.findmybarber.model.Registration;
+import com.findmybarber.model.Store;
+import com.findmybarber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -37,19 +52,25 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-import static com.findmybarber.activities.Registration.isEmailExist;
-import static com.findmybarber.activities.Registration.isValidEmailAddress;
+
+import static com.findmybarber.model.Registration.isEmailExist;
+import static com.findmybarber.model.Registration.isValidEmailAddress;
 
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
@@ -67,20 +88,30 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Dialog loginDialog;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
+    public static List<User> usersList = new ArrayList<>();
+    public static List<Admin> adminsList = new ArrayList<>();
+    public static List<Store> dbStoresList = new ArrayList<>();
+
     SharedPreferences pref;
     Customer customer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        pref = getPreferences(MODE_PRIVATE); // Private data saved on your device
-//        if (pref.getString("KeyUser",null) != null) {
-//            String email, password;
-//            email = pref.getString("KeyUser",null);
-//            password = pref.getString("KeyPassword",null);
-//            loginWithFireBase(email, password);
-//        }
-        mAuth = FirebaseAuth.getInstance();
+
+        getCustomersList();
+//        getAdminsList();
+        GetAdminList getAdminList = new GetAdminList();
+        try {
+            adminsList.addAll(getAdminList.execute().get());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE); // Private data saved on your device
+        if (pref.getString("KeyUser",null) != null) {
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            startActivity(intent);
+        }
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(default_web_client_id)
                 .requestEmail()
@@ -92,42 +123,92 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         loginDialog = new Dialog(this,R.style.PauseDialog);
         loginDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         findViewById(R.id.sign_in_with_google).setOnClickListener(this);
+        Dexter.withActivity(this).withPermissions(Manifest.permission.READ_CALENDAR,
+                Manifest.permission.WRITE_CALENDAR).withListener(new MultiplePermissionsListener() {
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                if(accessToken!=null)
+                {
+                    //TODO:: need to transfer from activity to another in case of succsess on permissions
+                }
+            }
 
-        ConnectToDatabase();
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+            }
+        }).check();
+//        ConnectToDatabase();
     }
+
+
+/*
+    public void getMixedList() {
+        usersList.addAll(customersList);
+        usersList.addAll(adminsList);
+    }
+*/
+
+    public void getCustomersList() {
+        String url = "http://192.168.1.2:45455/api/user/getUserClientsList";
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
+                        usersList.add(customer);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+
+
+    /*public void getAdminsList() {
+        String url = "http://192.168.1.2:45455/api/user/getUserAdminsList";
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                try {
+                    Gson gson = new Gson();
+                    for (int i = 0; i < response.length(); i++) {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        Admin admin = gson.fromJson(jsonObject.toString(), Admin.class);
+                        adminsList.add(admin);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        requestQueue.add(jsonArrayRequest);
+    }
+*/
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-
     }
 
-    public void ConnectToDatabase(){
-        try {
-
-            // SET CONNECTIONSTRING
-            Class.forName("com.mysql.jdbc.Driver");
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver ());
-            String username = "root";
-            String password = "1111";
-            Connection DbConn = DriverManager.getConnection("jdbc:jtds:sqlserver://35.197.253.88:3306/DATABASE;user=" + username + ";password=" + password);
-
-            Log.w("Connection","open");
-            Statement stmt = DbConn.createStatement();
-            ResultSet reset = stmt.executeQuery(" select * from users ");
-
-
-//            EditText num = (EditText) findViewById(R.id.displaymessage);
-//            num.setText(reset.getString(1));
-
-            DbConn.close();
-
-        } catch (Exception e)
-        {
-            Log.w("idan","" + e.getMessage());
-        }
-    }
     public void register(View view) {
         boolean flag = false;
         et_FirstName = registerDialog.findViewById(R.id.editTextFirstName);
@@ -146,34 +227,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String email = et_Email.getText().toString();
         String phone = et_Phone.getText().toString();
         if (validation(firstName, lastName, password, email, phone)) {
-            customer = new Customer(firstName, lastName, email, phone, password);
+//            customer = new Customer(firstName, lastName, email, phone, password);
             flag = true;
         }
         if(flag) {
 //            createUser(customer);
-            mAuth.createUserWithEmailAndPassword(customer.getUserEmail(), password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(Login.this, "Authentication succsess.",
-                                        Toast.LENGTH_SHORT).show();
-                                // Sign in success, update UI with the signed-in user's information
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                assert user != null;
-                                String uid = user.getUid();
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = database.getReference("customers").child(uid);
-                                myRef.setValue(customer);
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(Login.this, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                            // ...
-                        }
-                    });
+            Registration.volleyPost(getApplicationContext(),firstName, lastName, email, phone, password);
+            customer = new Customer(firstName, lastName, email, phone, password);
+            usersList.add(customer);
             registerDialog.dismiss();
         }
     }
@@ -226,7 +287,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             txt_err4.setText(R.string.illegal_email);
             flag = false;
         }
-        if (isEmailExist())
+        if (isEmailExist(email))
         {
             et_Email.setBackgroundResource(R.drawable.red_error_style);
             txt_err4.setText(R.string.exist_acc);
@@ -268,13 +329,25 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         String email = emailText.getText().toString();
         EditText passwordText = loginDialog.findViewById(R.id.etLoginPassword);
         String password = passwordText.getText().toString();
-        if(!checkIfEmpty(password,email))
-            loginWithFireBase(password,email);
-        else
-        {
+        if(!checkIfEmpty(password,email) && checkCredentials(email, password)) {
+            pref = getApplicationContext().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+                editor.putString("KeyUser",email);
+                editor.putString("KeyPassword",password);
+                editor.apply();
+
+            Intent intent = new Intent(Login.this, MainActivity.class);
+            startActivity(intent);
+        }
+        else {
             emailText.setBackgroundResource(R.drawable.red_error_style);
             passwordText.setBackgroundResource(R.drawable.red_error_style);
         }
+    }
+
+    private boolean checkCredentials(String email, String password) {
+        return  adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password))
+        || usersList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password));
     }
 
     private boolean checkIfEmpty(String password,String email){
