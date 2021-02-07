@@ -1,13 +1,12 @@
 package com.findmybarber.view.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,19 +18,19 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
 import com.findmybarber.model.ButtonAdapter;
-import com.findmybarber.model.Store;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -50,9 +49,12 @@ public class StoreDetails extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private TimePicker timePicker;
     private CalendarView calendarView;
-
+    private TextView currMonth;
+    private Calendar lastSelectedCalendar = null;
+    private String storeID;
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
+    private List<String> takenTimeSlots = new ArrayList<>();
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -91,45 +93,52 @@ public class StoreDetails extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_store_details, container, false);
         TextView textView = view.findViewById(R.id.storeName);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("store", MODE_PRIVATE);
         SharedPreferences sharedBookPreferences = getActivity().getSharedPreferences("book", MODE_PRIVATE);
         SharedPreferences sharedUserPreferences = getActivity().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
         textView.setText(sharedPreferences.getString("storeName", null));
+        storeID = sharedPreferences.getString("storeID", null);
         Button createAppointment = view.findViewById(R.id.makeAppointment);
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 
         GridView gridview = view.findViewById(R.id.gridview);
-        gridview.setAdapter(new ButtonAdapter(getContext()));
+        gridview.setAdapter(new ButtonAdapter(getContext(),takenTimeSlots));
         gridview.setNumColumns(4);
-
-//        timePicker = view.findViewById(R.id.datePicker1);
-
         calendarView = view.findViewById(R.id.calendarView);
-        setTimePickerInterval(timePicker);
+        lastSelectedCalendar = Calendar.getInstance();
+        calendarView.setMinDate(lastSelectedCalendar.getTimeInMillis() - 1000);
         Calendar calendar = Calendar.getInstance();
-        calendarView.setOnDateChangeListener((calendarView, year, month, dayOfMonth) ->
-                        calendar.set(year,month,dayOfMonth)
-        );
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
 
-//        Button button = gridview.findViewById(R.id.button);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                SharedPreferences sharedPreferences;
-//                sharedPreferences =  getContext().getSharedPreferences("button", MODE_PRIVATE);
-//                SharedPreferences.Editor editor = sharedPreferences.edit();
-//                editor.putString("timeSlot", button.getText().toString());
-//                editor.apply();
-//            }
-//        });
-
-
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month,
+                                            int dayOfMonth) {
+                Calendar checkCalendar = Calendar.getInstance();
+                checkCalendar.set(year, month, dayOfMonth);
+                if(checkCalendar.equals(lastSelectedCalendar))
+                    return;
+                if(checkCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY ||
+                        checkCalendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY )
+                    calendarView.setDate(lastSelectedCalendar.getTimeInMillis());
+                else
+                    lastSelectedCalendar = checkCalendar;
+                calendar.set(year, month, dayOfMonth);
+                takenTimeSlots.removeAll(takenTimeSlots);
+                @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                String selectedDate = df.format(calendar.getTime());
+                for (Book book:bookingsList) {
+                    if(book.getDate().equals(selectedDate))
+                        takenTimeSlots.add(book.getTime().toString());
+                    gridview.setAdapter(new ButtonAdapter(getContext(),takenTimeSlots));
+                }
+            }
+        });
         createAppointment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String storeID = sharedPreferences.getString("storeID", null);
+
                 String storeName = sharedPreferences.getString("storeName", null);
                 String clientEmail = sharedUserPreferences.getString("KeyUser", null);
                 String time = sharedBookPreferences.getString("timeSlot", null);

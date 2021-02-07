@@ -7,75 +7,74 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Book {
-    private String id;
-    private String storeID;
-    private String emailClient;
-    private String emailStore;
-    private String date;
-    private Time time;
+    private String ID;
+    private String StoreID;
+    private String EmailClient;
+    private String EmailStore;
+    private String Date;
+    private Time Time;
 
     @SuppressLint("SimpleDateFormat")
-    public Book(String id, String storeID, String emailClient, String emailStore, Calendar calendar) {
-        this.id = id;
-        this.storeID = storeID;
-        this.emailClient = emailClient;
-        this.emailStore = emailStore;
+    public Book(String ID, String storeID, String emailClient, String emailStore, Calendar calendar) {
+        this.ID = ID;
+        this.StoreID = storeID;
+        this.EmailClient = emailClient;
+        this.EmailStore = emailStore;
 
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        this.date = df.format(calendar.getTime());
-        @SuppressLint("SimpleDateFormat") DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        this.Date = df.format(calendar.getTime());
+        DateFormat formatter = new SimpleDateFormat("HH mm ss");
         String s = formatter.format(calendar.getTimeInMillis());
         try {
-            this.time = new Time(formatter.parse(s).getTime());
+            this.Time = new Time(formatter.parse(s).getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public String getId() {
-        return id;
+    public String getID() {
+        return ID;
     }
 
     public String getStoreID() {
-        return storeID;
+        return StoreID;
     }
 
     public void setStoreID(String storeID) {
-        this.storeID = storeID;
+        this.StoreID = storeID;
     }
 
     public String getEmailClient() {
-        return emailClient;
+        return EmailClient;
     }
 
     public void setEmailClient(String emailClient) {
-        this.emailClient = emailClient;
+        this.EmailClient = emailClient;
     }
 
     public String getEmailStore() {
-        return emailStore;
+        return EmailStore;
     }
 
     public void setEmailStore(String emailStore) {
-        this.emailStore = emailStore;
+        this.EmailStore = emailStore;
     }
 
     public String getDate() {
-        return date;
+        return Date;
     }
 
     public void setDate(String date) {
-        this.date = date;
+        this.Date = date;
     }
 
     public Time getTime() {
-        return time;
+        return Time;
     }
 
     public void setTime(Time time) {
-        this.time = time;
+        this.Time = time;
     }
 }

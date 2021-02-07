@@ -35,8 +35,10 @@ import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
 import com.findmybarber.model.Customer;
+import com.findmybarber.model.GetAdminList;
 import com.findmybarber.model.Registration;
 import com.findmybarber.model.Store;
+import com.findmybarber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -64,6 +66,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 import static com.findmybarber.model.Registration.isEmailExist;
@@ -85,8 +88,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Dialog loginDialog;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
-    public static List<Customer> usersList = new ArrayList<>();
-    public static List<Customer> customersList = new ArrayList<>();
+    public static List<User> usersList = new ArrayList<>();
     public static List<Admin> adminsList = new ArrayList<>();
     public static List<Store> dbStoresList = new ArrayList<>();
 
@@ -98,8 +100,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
 
         getCustomersList();
-        getAdminsList();
-        getMixedList();
+//        getAdminsList();
+        GetAdminList getAdminList = new GetAdminList();
+        try {
+            adminsList.addAll(getAdminList.execute().get());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
         pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE); // Private data saved on your device
         if (pref.getString("KeyUser",null) != null) {
             Intent intent = new Intent(Login.this, MainActivity.class);
@@ -135,13 +142,15 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
 
+/*
     public void getMixedList() {
         usersList.addAll(customersList);
         usersList.addAll(adminsList);
     }
+*/
 
     public void getCustomersList() {
-        String url = "http://192.168.1.27:45455/api/user/getUserClientsList";
+        String url = "http://192.168.1.2:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -167,8 +176,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void getAdminsList() {
-        String url = "http://192.168.1.27:45455/api/user/getUserAdminsList";
+
+    /*public void getAdminsList() {
+        String url = "http://192.168.1.2:45455/api/user/getUserAdminsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -193,7 +203,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         });
         requestQueue.add(jsonArrayRequest);
     }
-
+*/
     @Override
     public void onStart() {
         super.onStart();
@@ -336,7 +346,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     private boolean checkCredentials(String email, String password) {
-        return usersList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password));
+        return  adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password))
+        || usersList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password));
     }
 
     private boolean checkIfEmpty(String password,String email){

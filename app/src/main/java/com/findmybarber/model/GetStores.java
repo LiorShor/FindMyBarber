@@ -35,6 +35,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     private double selfLatitude;
     private double selfLongitude;
     private String urlString;
+    private static final String TAG = "GetStores";
     public static List<Store> storesList = new ArrayList<>();
 
     public GetStores(final Context context){
@@ -85,7 +86,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
             }
             return storesList;
         } catch (JSONException ex) {
-            ex.printStackTrace();
+            Log.d(TAG, "List from Google maps is empty !");
             return storesList;
         }
 //        return null;
@@ -137,8 +138,13 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
 
                 selfLatitude = location.getLatitude();
                 selfLongitude = location.getLongitude();
-                urlString = apiRequest(selfLatitude,selfLongitude);
             }
+            else {
+                selfLatitude = 37.421998333333335;
+                selfLongitude = -122.08400000000002;
+            }
+            urlString = apiRequest(selfLatitude,selfLongitude);
+
         }
         return urlString;
     }

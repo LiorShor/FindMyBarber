@@ -2,6 +2,7 @@ package com.findmybarber.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +17,20 @@ import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 import com.findmybarber.view.fragments.StoreDetails;
 
+import java.util.List;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class ButtonAdapter extends BaseAdapter
 {
     private Context mContext;
-//    private int btn_id;
-//    private int total_btns = 4;
     private String timeSlots[];
-    LayoutInflater inflter;
+    private List<String> takenTimeSlots;
+    private LayoutInflater inflter;
 
-    public ButtonAdapter(Context context) {
+    public ButtonAdapter(Context context, List<String> takenTimeSlots) {
         this.mContext = context;
+        this.takenTimeSlots = takenTimeSlots;
         this.timeSlots = new String[36];
         inflter = (LayoutInflater.from(context));
 
@@ -72,49 +75,29 @@ public class ButtonAdapter extends BaseAdapter
 
         Button button = grid.findViewById(R.id.button); // get the reference of ImageView
         button.setText(timeSlots[position]);
-
+        if(takenTimeSlots.contains(button.getText().toString()+":00")) {
+            button.setOnClickListener(view ->
+                    button.setClickable(false));
+            button.setAlpha(.5f);
+            button.setEnabled(false);
+        }
 
         button.setOnClickListener(view -> {
             SharedPreferences sharedPreferences;
             sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
+/*            if(sharedPreferences.getString("position",null)!=null)
+            {
+                buttonfi
+                button.setBackgroundResource(timeSlots[position]);
+            }*/
             editor.putString("timeSlot", button.getText().toString());
+            editor.putString("position", String.valueOf(position));
+
+
             editor.apply();
             button.setBackgroundResource(R.drawable.selectedtimeslot);
         });
-//
-//        button.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                SharedPreferences sharedPreferences;
-//                sharedPreferences =  mContext.getSharedPreferences("button", MODE_PRIVATE);
-//                SharedPreferences.Editor editor = sharedPreferences.edit();
-//                editor.putString("timeSlot", button.getText().toString());
-//                editor.apply();
-//            }
-//        });
-
-//        Button btn;
-//
-//        if (view == null) {
-//            btn = new Button(mContext);
-//            btn.setText("Button " + (++btn_id));
-//        } else {
-//            btn = (Button) view;
-//        }
-//
-//        btn.setOnClickListener(new View.OnClickListener()
-//        {
-//            @Override
-//            public void onClick(View v)
-//            {
-//                Toast.makeText(v.getContext(), "Button #" + (i + 1), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        return btn;
         return grid;
 
     }

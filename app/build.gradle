@@ -27,6 +27,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.sundeepk:compact-calendar-view:3.0.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.android.libraries.places:places:2.4.0'
     implementation platform('com.google.firebase:firebase-bom:26.1.1')
@@ -38,13 +39,13 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:5.15.3'
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'com.google.firebase:firebase-auth:20.0.1'
-    implementation 'com.google.firebase:firebase-firestore:22.0.1'
+    implementation 'com.google.firebase:firebase-auth:20.0.2'
+    implementation 'com.google.firebase:firebase-firestore:22.0.2'
     implementation 'com.google.firebase:firebase-database:19.6.0'
     implementation 'androidx.drawerlayout:drawerlayout:1.1.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.2'
-    implementation 'androidx.navigation:navigation-ui:2.3.2'
+    implementation 'androidx.navigation:navigation-fragment:2.3.3'
+    implementation 'androidx.navigation:navigation-ui:2.3.3'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'

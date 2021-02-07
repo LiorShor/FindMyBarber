@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +29,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
-import com.findmybarber.model.Store;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.navigation.NavigationView;
@@ -43,13 +41,12 @@ import org.json.JSONObject;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
+    private String currUser;
     private FragmentManager fragmentManager;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
@@ -79,9 +76,21 @@ public class MainActivity extends AppCompatActivity {
             showAlert();
         }
         else {
-            loadFirstFragment();
+            SharedPreferences pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+            if (pref.getString("KeyUser",null) != null) {
+                currUser =pref.getString("KeyUser",null);
+                if(checkIfAdmin(currUser))
+                    loadStoreDetails();
+                else
+                    loadFirstFragment();
+            }
         }
     }
+
+    public boolean checkIfAdmin(String email) {
+        return Login.adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email));
+    }
+
     public Fragment getVisibleFragment(){
         FragmentManager fragmentManager = MainActivity.this.getSupportFragmentManager();
         List<Fragment> fragments = fragmentManager.getFragments();
@@ -98,10 +107,12 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         Fragment f = getVisibleFragment();
         if(!(f instanceof BarberSearch))
-            super.onBackPressed();
-        else {
+            if(checkIfAdmin(currUser))
+                this.moveTaskToBack(true);
+            else
+                super.onBackPressed();
+        else
             this.moveTaskToBack(true);
-        }
     }
 
     private boolean isLocationEnabled() {
@@ -124,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -134,7 +145,24 @@ public class MainActivity extends AppCompatActivity {
                     Gson gson = new Gson();
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
-                        Book book = gson.fromJson(jsonObject.toString(), Book.class);
+                        String id = jsonObject.getString("ID");
+                        String storeID = jsonObject.getString("StoreID");
+                        String emailClient = jsonObject.getString("EmailClient");
+                        String emailStore = jsonObject.getString("EmailStore");
+                        String date = jsonObject.getString("Date");
+                        String time = jsonObject.getString("Time");
+                        String hour = time.split(":",2)[0];
+                        String minute = time.split(":",3)[1];
+                        Calendar calendar = Calendar.getInstance();
+                        int year = Integer.parseInt(date.split("-",3)[0]);
+                        int month =  Integer.parseInt(date.split("-",3)[1]);
+                        int dayOfMonth =  Integer.parseInt(date.split("-",3)[2].split("T",2)[0]);
+                        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                        calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+                        calendar.set(Calendar.SECOND, 0);
+                        calendar.set(year, month-1, dayOfMonth);
+                        Book book = new Book(id,storeID,emailClient,emailStore,calendar);
+//                        Book book = gson.fromJson(jsonObject.toString(), Book.class);
                         bookingsList.add(book);
                     }
                 } catch (JSONException e) {
@@ -151,11 +179,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
-            postData.put("ID", book.getId());
+            postData.put("ID", book.getID());
             postData.put("StoreID", book.getStoreID());
             postData.put("EmailClient", book.getEmailClient());
             postData.put("EmailStore", book.getEmailStore());
@@ -177,33 +205,6 @@ public class MainActivity extends AppCompatActivity {
         });
         requestQueue.add(jsonObjectRequest);
     }
-
-//    public void getStoresList() {
-//        String url = "http://192.168.1.27:45455/api/store/getStoresList";
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//
-//        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-//            @Override
-//            public void onResponse(JSONArray response) {
-//                try {
-//                    Gson gson = new Gson();
-//                    for (int i = 0; i < response.length(); i++) {
-//                        JSONObject jsonObject = response.getJSONObject(i);
-//                        Store store = gson.fromJson(jsonObject.toString(), Store.class);
-//                        dbStoresList.add(store);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                error.printStackTrace();
-//            }
-//        });
-//        requestQueue.add(jsonArrayRequest);
-//    }
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
