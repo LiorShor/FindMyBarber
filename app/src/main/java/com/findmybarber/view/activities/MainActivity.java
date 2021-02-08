@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -29,8 +30,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
+import com.findmybarber.view.fragments.ActionFavorites;
+import com.findmybarber.view.fragments.ActionMe;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
+    public static List<Book> appointmentsForUserList = new ArrayList<>();
 //    public static List<Store> dbStoresList = new ArrayList<>();
 
     @Override
@@ -63,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         mDrawer = findViewById(R.id.drawer_layout);
         NavigationView nvDrawer = findViewById(R.id.nvView);
@@ -86,6 +94,31 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+        // By using switch we can easily get
+        // the selected fragment
+        // by using there id.
+        Fragment selectedFragment = null;
+        switch (item.getItemId()) {
+            case R.id.action_me:
+                selectedFragment = new ActionMe();
+                break;
+            case R.id.action_favorites:
+                selectedFragment = new ActionFavorites();
+                break;
+            case R.id.action_home:
+                selectedFragment = new BarberSearch();
+                break;
+        }
+        // It will help to replace the
+        // one fragment to other.
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flContent, selectedFragment)
+                .commit();
+        return true;
+    };
 
     public boolean checkIfAdmin(String email) {
         return Login.adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email));
@@ -135,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.43.202:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -179,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.43.202:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {

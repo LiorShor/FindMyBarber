@@ -150,7 +150,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 */
 
     public void getCustomersList() {
-        String url = "http://192.168.1.2:45455/api/user/getUserClientsList";
+        String url = "http://192.168.43.202:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -178,7 +178,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
     /*public void getAdminsList() {
-        String url = "http://192.168.1.2:45455/api/user/getUserAdminsList";
+        String url = "http://192.168.43.202:45455/api/user/getUserAdminsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
