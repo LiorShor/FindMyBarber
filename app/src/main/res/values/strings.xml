@@ -59,5 +59,6 @@
     <string name="book">Book Now</string>
     <string name="bookagain">Book Again</string>
     <string name="another_date">Another date?</string>
+    <string name="BookNow">BOOK NOW</string>
 
 </resources>

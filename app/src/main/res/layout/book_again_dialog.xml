@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     app:layout_constraintCircleRadius="45dp"
-    tools:context=".view.activities.Login">
+    tools:context=".view.fragments.ActionMe">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -37,7 +37,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="148dp"
                 android:background="@drawable/bt_finish_style"
-                android:text="@string/book_now"
+                android:text="@string/BookNow"
                 android:textColor="#fff"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +48,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/card_style"
-                android:onClick="dismiss"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
@@ -58,15 +57,15 @@
                 app:layout_constraintStart_toEndOf="@+id/etLoginEmailAddress"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.053"
-                tools:ignore="ContentDescription" />
+                tools:ignore="ContentDescription"
+                />
 
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/another_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:onClick="goToRegister"
                 android:text="@string/another_date"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -76,9 +75,11 @@
 
             <TextView
                 android:id="@+id/suggestedTimeSlot"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
+                android:textStyle="bold"
+                android:textColor="#14A0F9"
                 app:layout_constraintBottom_toTopOf="@+id/bt_book"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

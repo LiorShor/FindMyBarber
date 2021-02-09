@@ -70,6 +70,7 @@ public class ActionMe extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        MainActivity.appointmentsForUserList.removeAll(MainActivity.appointmentsForUserList);
         GetBookingForCurrentUserList getBookingForCurrentUserList= new GetBookingForCurrentUserList(getContext());
         try {
             MainActivity.appointmentsForUserList.addAll(getBookingForCurrentUserList.execute().get());
