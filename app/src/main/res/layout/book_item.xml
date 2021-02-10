@@ -9,9 +9,9 @@
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:contentDescription="@string/image"
-        android:src="@android:drawable/ic_menu_gallery"
+        android:src="@drawable/scissors"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +40,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description"
         app:layout_constraintVertical_bias="1.0" />
+
 
     <TextView
         android:id="@+id/description"

@@ -133,11 +133,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                 String userEmail = Login.adminsList.stream().filter(user -> user.getStoreID().equals(store.getID())).findFirst().get().getUserEmail();
                 Book book1 = new Book(id.toString(), store.getID(), sharedPreferences.getString("KeyUser",null), userEmail, calendar);
                 bookingsList.add(book1);
+                mBookings.add(book1);
                 MainActivity mainActivity = (MainActivity) mFragmentActivity;
                 assert mainActivity != null;
                 mainActivity.postBookAppointment(book1);
                 Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
+                notifyItemInserted(getItemCount());
+//                notifyDataSetChanged();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }

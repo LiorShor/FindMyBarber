@@ -24,55 +24,38 @@
             android:id="@+id/editTextStoreName"
             android:layout_width="240dp"
             android:layout_height="34dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="60dp"
             android:autofillHints="Store name"
             android:background="@drawable/textview_corner_style"
             android:ems="10"
             android:hint="@string/store_name"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextAddress"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.432"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <EditText
-            android:id="@+id/editTextRank"
-            android:layout_width="243dp"
-            android:layout_height="34dp"
-            android:layout_marginBottom="24dp"
-            android:autofillHints="Password"
-            android:background="@drawable/textview_corner_style"
-            android:ems="10"
-            android:hint="@string/rank"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextDescription"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.411"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_add_store" />
 
         <EditText
             android:id="@+id/editTextDescription"
-            android:layout_width="243dp"
+            android:layout_width="240dp"
             android:layout_height="34dp"
-            android:layout_marginBottom="12dp"
             android:autofillHints="Email"
+
             android:background="@drawable/textview_corner_style"
             android:ems="10"
             android:hint="@string/description"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextPhone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.411"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_error_3" />
 
         <EditText
             android:id="@+id/editTextPhone"
             android:layout_width="240dp"
             android:layout_height="34dp"
-            android:layout_marginBottom="28dp"
             android:autofillHints="Phone number"
             android:background="@drawable/textview_corner_style"
             android:ems="10"
@@ -80,22 +63,23 @@
             android:inputType="number|phone"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/bt_add_store"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.432"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_error_2" />
+
 
         <Button
             android:id="@+id/bt_add_store"
             android:layout_width="240dp"
             android:layout_height="50dp"
-            android:layout_marginBottom="220dp"
+            android:layout_marginBottom="196dp"
             android:background="@drawable/bt_finish_style"
             android:text="@string/bt_add_store"
-
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.432"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent">
 
         </Button>
@@ -104,7 +88,6 @@
             android:id="@+id/editTextAddress"
             android:layout_width="240dp"
             android:layout_height="34dp"
-            android:layout_marginBottom="16dp"
             android:autofillHints="Last name"
             android:background="@drawable/textview_corner_style"
             android:ems="10"
@@ -112,27 +95,26 @@
             android:inputType="textPersonName"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextRank"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.432"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_error_1" />
 
         <TextView
             android:id="@+id/tv_error_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.194"
+            app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextStoreName" />
-
 
         <TextView
             android:id="@+id/tv_error_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.194"
+            app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextAddress" />
 
@@ -141,46 +123,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.194"
+            app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextRank" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextPhone" />
 
         <TextView
             android:id="@+id/tv_error_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="4dp"
+            android:layout_height="18dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.194"
+            app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextDescription" />
-
-        <TextView
-            android:id="@+id/tv_error_5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.194"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextPhone" />
 
         <TextView
             android:id="@+id/title_add_store"
             android:layout_width="177dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="64dp"
             android:gravity="center"
             android:text="@string/add_store"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/quantum_black_100"
-            app:layout_constraintBottom_toTopOf="@+id/editTextStoreName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.507"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

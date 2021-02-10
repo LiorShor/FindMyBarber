@@ -68,5 +68,6 @@
     <string name="bt_add_store">Add Store</string>
     <string name="edit_profile">Edit Your Profile</string>
     <string name="bt_edit_profile">Edit</string>
+    <string name="my_profile">My Profile</string>
 
 </resources>
