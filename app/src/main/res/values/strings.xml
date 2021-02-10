@@ -60,5 +60,13 @@
     <string name="bookagain">Book Again</string>
     <string name="another_date">Another date?</string>
     <string name="BookNow">BOOK NOW</string>
+    <string name="add_store">Add store to Find My Barber</string>
+    <string name="store_name">Store name</string>
+    <string name="Address">Address</string>
+    <string name="rank">Rank</string>
+    <string name="description">Description</string>
+    <string name="bt_add_store">Add Store</string>
+    <string name="edit_profile">Edit Your Profile</string>
+    <string name="bt_edit_profile">Edit</string>
 
 </resources>

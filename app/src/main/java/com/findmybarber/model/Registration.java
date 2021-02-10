@@ -28,7 +28,7 @@ public class Registration {
         return m.matches();
     }
     public static void volleyPost(Context context, String  firstName, String lastName, String email, String phoneNumber, String password){
-        String postUrl = "http://192.168.1.27:45455/api/user/addUser";
+        String postUrl = "http://192.168.43.202:45455/api/user/addUser";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 //        String id = UUID.randomUUID().toString().replace("-", "");
         JSONObject postData = new JSONObject();

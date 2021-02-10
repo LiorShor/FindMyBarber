@@ -9,9 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -29,10 +27,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
 import com.findmybarber.view.fragments.ActionFavorites;
 import com.findmybarber.view.fragments.ActionMe;
+import com.findmybarber.view.fragments.AddBarber;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -43,7 +43,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -169,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.43.202:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -213,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.43.202:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -258,16 +257,13 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass = null; //TODO: DELETE
+
         switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
-//                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
+            case R.id.nav_new_barber:
+                fragment = new AddBarber();
                 break;
-            case R.id.nav_second_fragment:
-//                fragmentClass = SecondFragment.class; //TODO: navigate to another activity
-                break;
-            case R.id.nav_third_fragment:
-//                fragmentClass = ThirdFragment.class; //TODO: navigate to another activity
+            case R.id.nav_edit_profile:
+                fragment = new EditProfile();
                 break;
             case R.id.logout:
                 SharedPreferences pref = getApplicationContext().getSharedPreferences("CurrentUserPref", 0); // 0 - for private mode
@@ -275,23 +271,20 @@ public class MainActivity extends AppCompatActivity {
                 editor.remove("KeyUser");
                 editor.remove("KeyPassword");
                 editor.apply();
+                Intent intent = new Intent(MainActivity.this, Login.class);
+                startActivity(intent);
                 break;
 
             default:
 //                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
         }
 
-        try {
-            assert fragmentClass != null;
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(fragment != null){
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .commit();
         }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        assert fragment != null;
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item has been done by NavigationView
         menuItem.setChecked(true);
