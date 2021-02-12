@@ -12,6 +12,5 @@
         android:scaleType="fitXY"
         android:layout_gravity="center_horizontal"
         android:background="@drawable/timeslot"
-        android:textColor="#fff"
         />
 </LinearLayout>

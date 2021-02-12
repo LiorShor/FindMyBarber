@@ -25,8 +25,10 @@ public class ButtonAdapter extends BaseAdapter
 {
     private Context mContext;
     private String timeSlots[];
+
     private List<String> takenTimeSlots;
     private LayoutInflater inflter;
+    private static View prevView = null;
 
     public ButtonAdapter(Context context, List<String> takenTimeSlots) {
         this.mContext = context;
@@ -74,10 +76,11 @@ public class ButtonAdapter extends BaseAdapter
         }
 
         Button button = grid.findViewById(R.id.button); // get the reference of ImageView
+        button.setTextColor(Color.WHITE);
         button.setText(timeSlots[position]);
-        if(takenTimeSlots.contains(button.getText().toString()+":00")) {
-            button.setOnClickListener(view ->
-                    button.setClickable(false));
+        if(takenTimeSlots.contains(button.getText().toString()+":00"))
+        {
+            button.setClickable(false);
             button.setAlpha(.5f);
             button.setEnabled(false);
         }
@@ -85,18 +88,18 @@ public class ButtonAdapter extends BaseAdapter
         button.setOnClickListener(view -> {
             SharedPreferences sharedPreferences;
             sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-/*            if(sharedPreferences.getString("position",null)!=null)
+            if(prevView!= null)
             {
-                buttonfi
-                button.setBackgroundResource(timeSlots[position]);
-            }*/
+               Button button1 = prevView.findViewById(R.id.button);
+                button1.setBackgroundResource(R.drawable.timeslot);
+                button1.setTextColor(Color.WHITE);
+            }
+            SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("timeSlot", button.getText().toString());
-            editor.putString("position", String.valueOf(position));
-
-
+            prevView = view;
             editor.apply();
             button.setBackgroundResource(R.drawable.selectedtimeslot);
+            button.setTextColor(Color.RED);
         });
         return grid;
 

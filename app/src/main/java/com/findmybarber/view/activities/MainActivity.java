@@ -28,7 +28,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
+import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
+import com.findmybarber.view.fragments.AdminManagement;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.navigation.NavigationView;
@@ -79,8 +81,14 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
             if (pref.getString("KeyUser",null) != null) {
                 currUser =pref.getString("KeyUser",null);
-                if(checkIfAdmin(currUser))
-                    loadStoreDetails();
+                if(checkIfAdmin(currUser)) {
+                    Admin userAdmin = Login.adminsList.stream().filter(admin -> admin.getUserEmail().equals(currUser)).findAny().orElse(null);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("StoreID",userAdmin.getStoreID());
+                    editor.apply();
+                    loadAdminManagement();
+
+                }
                 else
                     loadFirstFragment();
             }
@@ -142,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 try {
-                    Gson gson = new Gson();
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         String id = jsonObject.getString("ID");
@@ -178,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void postBookAppointment(Book book){
+    public static void postBookAppointment(Context context,Book book){
         String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {
             postData.put("ID", book.getID());
@@ -283,7 +290,11 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.flContent, new BarberSearch()).commit();
     }
-
+    public void loadAdminManagement() {
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+       fragmentTransaction.add(R.id.flContent, new AdminManagement()).commit();
+    }
     public void loadStoreDetails() {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

@@ -2,11 +2,13 @@ package com.findmybarber.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -63,6 +65,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -123,6 +126,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         loginDialog = new Dialog(this,R.style.PauseDialog);
         loginDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         findViewById(R.id.sign_in_with_google).setOnClickListener(this);
+
         Dexter.withActivity(this).withPermissions(Manifest.permission.READ_CALENDAR,
                 Manifest.permission.WRITE_CALENDAR).withListener(new MultiplePermissionsListener() {
             @Override

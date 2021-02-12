@@ -1,5 +1,6 @@
 package com.findmybarber.model;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
         viewHolder.description.setText(store.getDescription());
         Button bookNow = viewHolder.itemView.findViewById(R.id.bookNow);
         bookNow.setOnClickListener(view -> {
+
             if (Login.dbStoresList.contains(mStores.get(viewHolder.getAdapterPosition()))) {
                 MainActivity mainActivity = (MainActivity) mFragmentActivity;
                 mainActivity.loadStoreDetails();

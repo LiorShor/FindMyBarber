@@ -7,11 +7,9 @@
     tools:context=".view.activities.MainActivity">
 
     <com.github.sundeepk.compactcalendarview.CompactCalendarView
-        android:visibility="invisible"
         android:id="@+id/compactcalendar_view"
         android:layout_width="378dp"
         android:layout_height="210dp"
-        android:layout_marginTop="24dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         app:compactCalendarBackgroundColor="#BC3986AA"
@@ -23,33 +21,25 @@
         app:compactCalendarTargetHeight="250dp"
         app:compactCalendarTextColor="#FFFFFF"
         app:compactCalendarTextSize="12sp"
-        app:layout_constraintBottom_toTopOf="@+id/makeAppointment"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.515"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.174" />
-
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="285dp"
-        android:layout_height="266dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/storeName"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.191" />
 
     <TextView
         android:id="@+id/storeName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintVertical_bias="0.025"
+        android:gravity="center"
+        android:textSize="20sp"/>
 
 
     <GridView
@@ -57,31 +47,35 @@
         android:layout_width="match_parent"
         android:layout_height="170dp"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:horizontalSpacing="10dp"
         android:numColumns="auto_fit"
-        android:scrollbars="none"
+        android:scrollbars="horizontal"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view"
+        app:layout_constraintTop_toBottomOf="@+id/compactcalendar_view"
 
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.08" />
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginTop="10dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="@+id/calendarView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/compactcalendar_view"
+
+        app:layout_constraintVertical_bias="1.0" />
 
     <View
         android:id="@+id/view1"
@@ -104,15 +98,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gridview"
-        app:layout_constraintVertical_bias="0.312" />
+        app:layout_constraintTop_toBottomOf="@+id/view1"
+        app:layout_constraintVertical_bias="0.184" />
 
     <TextView
-        android:visibility="invisible"
         android:id="@+id/CurrMonth"
         android:layout_width="378dp"
         android:layout_height="27dp"
         android:background="#BC3986AA"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/compactcalendar_view"
