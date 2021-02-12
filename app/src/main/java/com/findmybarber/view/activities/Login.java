@@ -91,7 +91,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Dialog loginDialog;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
-    public static List<User> usersList = new ArrayList<>();
+    public static List<Customer> usersList = new ArrayList<>();
     public static List<Admin> adminsList = new ArrayList<>();
     public static List<Store> dbStoresList = new ArrayList<>();
 

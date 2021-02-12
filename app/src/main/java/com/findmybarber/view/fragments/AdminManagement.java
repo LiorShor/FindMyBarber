@@ -12,7 +12,9 @@ import android.widget.TextView;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
 import com.findmybarber.model.BookingAdapter;
+import com.findmybarber.model.Customer;
 import com.findmybarber.model.GetBookingList;
+import com.findmybarber.view.activities.Login;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import java.text.SimpleDateFormat;
@@ -84,7 +86,7 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
         View view = inflater.inflate(R.layout.fragment_admin_management, container, false);
         compactCalendarView = view.findViewById(R.id.compactcalendar_view);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
-        compactCalendarView.setFirstDayOfWeek(Calendar.MONDAY);
+        compactCalendarView.setFirstDayOfWeek(Calendar.SUNDAY);
         compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(true);
         compactCalendarView.setIsRtl(false);
         compactCalendarView.displayOtherMonthDays(false);
@@ -105,7 +107,8 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
                 bookingListForDay.clear();
                 for (Book book : bookingList) {
                     if(book.getDate().equals(dateFormatForDate.format(dateClicked))) {
-                        string = "Meeting with " + book.getEmailClient() + " at " + book.getTime().toString();
+                        Customer customer = Login.usersList.stream().filter(user -> user.getUserEmail().equals(book.getEmailClient())).findFirst().orElse(null);
+                        string = "Meeting with " + customer.getUserName() + " "+ customer.getUserSurname() + " at " + book.getTime().toString();
                         bookingStringsListForDay.add(string);
                         bookingListForDay.add(book);
                     }
@@ -115,7 +118,7 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-
+                currMonth.setText(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
             }
         });
         recyclerView.setOnClickListener(view1 ->

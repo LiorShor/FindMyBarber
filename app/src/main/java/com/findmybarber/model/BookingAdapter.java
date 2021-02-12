@@ -91,50 +91,22 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             modifyBookingDialog.show();
             ImageView dismiss = modifyBookingDialog.findViewById(R.id.dismiss);
             TextView bookingWith = modifyBookingDialog.findViewById(R.id.meetingWith);
-            TextView contactName = modifyBookingDialog.findViewById(R.id.contactName);
-            TextView contactPhone = modifyBookingDialog.findViewById(R.id.phoneNumber);
-            EditText dateEditText = modifyBookingDialog.findViewById(R.id.dateEditText);
             EditText timeEditText = modifyBookingDialog.findViewById(R.id.timeEditText);
-            Button saveChanges = modifyBookingDialog.findViewById(R.id.saveChanges);
-            contactName.setText(user.getUserName()+ " "+ user.getUserSurname());
-            contactPhone.setText(user.getUserPhoneNumber());
-            contactPhone.setOnClickListener(view1 -> {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + user.getUserPhoneNumber()));//change the number
-                context.startActivity(callIntent);
-            });
+            timeEditText.setText(modifyBook.getTime().toString());
+            setContactName();
+            setContactPhone();
             bookingWith.setText("Edit Meeting with " + user.getUserName());
+            EditText dateEditText = modifyBookingDialog.findViewById(R.id.dateEditText);
             dateEditText.setText(modifyBook.getDate());
             dismiss.setOnClickListener(view1 -> modifyBookingDialog.dismiss());
-            timeEditText.setText(modifyBook.getTime().toString());
-            saveChanges.setOnClickListener(view1 -> {
-                volleyPost(context,modifyBook);
-                modifyBook.setDate(dateEditText.getText().toString());
-                String time = timeEditText.getText().toString();
-                Calendar calendar = Calendar.getInstance();
-                String hour = time.split(":",2)[0];
-                String minute = time.split(":",3)[1];
-                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-                calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
-                calendar.set(Calendar.SECOND, 0);
-                String s = dateFormatForTime.format(calendar.getTimeInMillis());
-                try {
-                    Time time1 = new Time(dateFormatForTime.parse(s).getTime());
-                    modifyBook.setTime(time1);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                MainActivity.postBookAppointment(context, modifyBook);
-                modifyBookingDialog.dismiss();
-                notifyDataSetChanged();
-            });
+            saveChanges(modifyBook,dateEditText,timeEditText,position);
         });
         Button deleteButton =  viewHolder.itemView.findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(view1 -> {
             Book modifyBook = mBook.get(viewHolder.getAdapterPosition());
             AdminManagement.bookingList.remove(modifyBook);
             mBookString.remove(viewHolder.getAdapterPosition());
-            volleyPost(context,modifyBook);
+            RemoveFromDBPost(context,modifyBook);
             notifyItemRemoved(position);
             itemCallback.updateCompactCalendarView();
 
@@ -159,12 +131,19 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             deleteButton.setVisibility(View.VISIBLE);
         }
     }
+
+    @SuppressLint("SetTextI18n")
+    private void setContactName() {
+        TextView contactName = modifyBookingDialog.findViewById(R.id.contactName);
+        contactName.setText(user.getUserName()+ " "+ user.getUserSurname());
+    }
+
     @Override
     public int getItemCount() {
         return mBookString.size();
     }
 
-    public static void volleyPost(Context context, Book book){
+    public static void RemoveFromDBPost(Context context, Book book){
         String postUrl = "http://192.168.1.2:45455/api/Book/removeAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
@@ -181,9 +160,65 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postUrl, postData, response -> {}, Throwable::printStackTrace);
         requestQueue.add(jsonObjectRequest);
     }
+    public static void EditDBPost(Context context, Book book){
+        String postUrl = "http://192.168.1.2:45455/api/Book/editBookingAppointment";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JSONObject postData = new JSONObject();
+        try {
+            postData.put("ID",book.getID());
+            postData.put("StoreID",book.getStoreID());
+            postData.put("EmailClient",book.getEmailClient());
+            postData.put("EmailStore",book.getEmailStore());
+            postData.put("Date",book.getDate());
+            postData.put("Time",book.getTime());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, postUrl, postData, response -> {}, Throwable::printStackTrace);
+        requestQueue.add(jsonObjectRequest);
+    }
+
     public interface ItemCallback {
         void updateCompactCalendarView();
     }
+
+    public void saveChanges(Book modifyBook,TextView dateEditText,TextView timeEditText,int position){
+        Button saveChanges = modifyBookingDialog.findViewById(R.id.saveChanges);
+        saveChanges.setOnClickListener(view1 -> {
+            modifyBook.setDate(dateEditText.getText().toString());
+            String time = timeEditText.getText().toString();
+            Calendar calendar = Calendar.getInstance();
+            String hour = time.split(":",2)[0];
+            String minute = time.split(":",3)[1];
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+            calendar.set(Calendar.SECOND, 0);
+            String s = dateFormatForTime.format(calendar.getTimeInMillis());
+            try {
+                Time time1 = new Time(dateFormatForTime.parse(s).getTime());
+                modifyBook.setTime(time1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            EditDBPost(context,modifyBook);
+            modifyBookingDialog.dismiss();
+            itemCallback.updateCompactCalendarView();
+            mBook.clear();
+            mBookString.clear();
+            notifyItemRemoved(position);
+        });
+    }
+    public void setContactPhone()
+    {
+        TextView contactPhone = modifyBookingDialog.findViewById(R.id.phoneNumber);
+        contactPhone.setText(user.getUserPhoneNumber());
+        contactPhone.setOnClickListener(view1 -> {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:" + user.getUserPhoneNumber()));//change the number
+            context.startActivity(callIntent);
+        });
+    }
+
 }
 
 
