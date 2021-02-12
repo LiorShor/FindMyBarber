@@ -27,6 +27,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.findmybarber.model.Admin;
+import com.findmybarber.model.Customer;
 import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.43.202:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -212,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.43.202:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -315,5 +317,21 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContent, new StoreDetails()).addToBackStack(null).commit();
+    }
+
+    public void loadBarberSearch() {
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.flContent, new BarberSearch()).addToBackStack(null).commit();
+    }
+
+    public String getFullName(String userEmail) {
+        Customer customer = Login.customersList.stream().filter(c-> c.getUserEmail().equals(userEmail)).findAny().get();
+        if(customer != null)
+            return customer.getUserName() + " " + customer.getUserSurname();
+        else {
+            Admin admin = Login.adminsList.stream().filter(adm-> adm.getUserEmail().equals(userEmail)).findAny().get();
+            return admin.getUserName() + " " + admin.getUserSurname();
+        }
     }
 }

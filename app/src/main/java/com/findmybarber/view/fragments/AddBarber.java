@@ -7,8 +7,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.findmybarber.R;
+import com.findmybarber.model.GetCoordinatesByAddress;
+import com.findmybarber.model.Store;
+
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -61,6 +68,44 @@ public class AddBarber extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_barber, container, false);
+        View view =  inflater.inflate(R.layout.fragment_add_barber, container, false);
+        TextView tvStoreName = view.findViewById(R.id.editTextStoreName);
+        TextView tvAddress = view.findViewById(R.id.editTextAddress);
+        TextView tvPhoneNumber = view.findViewById(R.id.editTextPhone);
+        TextView tvDescription = view.findViewById(R.id.editTextDescription);
+
+        TextView errStoreName = view.findViewById(R.id.tv_error_1);
+        TextView errAddress = view.findViewById(R.id.tv_error_2);
+        TextView errPhoneNumber = view.findViewById(R.id.tv_error_3);
+        TextView errDescription= view.findViewById(R.id.tv_error_4);
+
+        Button buttonAddStore = view.findViewById(R.id.bt_add_store);
+
+        buttonAddStore.setOnClickListener(v -> {
+            String txtStoreName = tvStoreName.getText().toString();
+            String txtAddress = tvAddress.getText().toString();
+            String txtPhoneNumber = tvPhoneNumber.getText().toString();
+            String txtDescription = tvDescription.getText().toString();
+
+            if(inputValidation(txtStoreName, txtAddress, txtPhoneNumber, txtDescription, errStoreName, errAddress, errPhoneNumber, errDescription)) {
+                GetCoordinatesByAddress getCoordinatesByAddress = new GetCoordinatesByAddress(txtAddress);
+                try {
+                    String response = getCoordinatesByAddress.execute().get();
+                    String id = UUID.randomUUID().toString();
+                    Store store = new Store(id, txtStoreName, txtAddress, 0, null, txtDescription, txtPhoneNumber,
+                            Double.parseDouble(response.split(",", 2)[0]), Double.parseDouble(response.split(",", 2)[1]));
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return view;
+    }
+
+    private boolean inputValidation(String txtStoreName, String txtAddress, String txtPhoneNumber, String txtDescription, TextView errStoreName, TextView errAddress, TextView errPhoneNumber, TextView errDescription) {
+       boolean flag = true;
+       return flag;
     }
 }

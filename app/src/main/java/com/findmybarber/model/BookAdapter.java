@@ -140,7 +140,6 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                 Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 notifyItemInserted(getItemCount());
-//                notifyDataSetChanged();
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
