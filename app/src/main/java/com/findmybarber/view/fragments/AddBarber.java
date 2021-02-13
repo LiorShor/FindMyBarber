@@ -1,5 +1,6 @@
 package com.findmybarber.view.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -9,13 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.findmybarber.R;
+import com.findmybarber.model.AddStore;
+import com.findmybarber.model.Customer;
 import com.findmybarber.model.GetCoordinatesByAddress;
 import com.findmybarber.model.Store;
+import com.findmybarber.view.activities.Login;
+import com.findmybarber.view.activities.MainActivity;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -69,6 +77,7 @@ public class AddBarber extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_add_barber, container, false);
+        MainActivity mainActivity = (MainActivity) getActivity();
         TextView tvStoreName = view.findViewById(R.id.editTextStoreName);
         TextView tvAddress = view.findViewById(R.id.editTextAddress);
         TextView tvPhoneNumber = view.findViewById(R.id.editTextPhone);
@@ -91,12 +100,14 @@ public class AddBarber extends Fragment {
                 GetCoordinatesByAddress getCoordinatesByAddress = new GetCoordinatesByAddress(txtAddress);
                 try {
                     String response = getCoordinatesByAddress.execute().get();
-                    String id = UUID.randomUUID().toString();
-                    Store store = new Store(id, txtStoreName, txtAddress, 0, null, txtDescription, txtPhoneNumber,
+                    Store store = new Store(UUID.randomUUID().toString(), txtStoreName, txtAddress, 0, null, txtDescription, txtPhoneNumber,
                             Double.parseDouble(response.split(",", 2)[0]), Double.parseDouble(response.split(",", 2)[1]));
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                    assert mainActivity != null;
+                    AddStore addStore = new AddStore(store, mainActivity.getCurrentUserEmail());
+                    addStore.execute().get();
+                    Toast.makeText(mainActivity, "Congratulations, you are now a new BARBER!", Toast.LENGTH_SHORT).show();
+                    mainActivity.logout();
+                } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
             }

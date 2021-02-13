@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -20,15 +21,18 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Customer;
+import com.findmybarber.model.Store;
 import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
@@ -40,6 +44,7 @@ import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +52,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
@@ -57,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
     public static List<Book> appointmentsForUserList = new ArrayList<>();
-//    public static List<Store> dbStoresList = new ArrayList<>();
+    private NavigationView nvDrawer;
+    private SharedPreferences userPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +73,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: ");
         // Set a Toolbar to replace the ActionBar.
-//        getStoresList();
+
+        userPref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
@@ -75,20 +85,21 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
         mDrawer = findViewById(R.id.drawer_layout);
-        NavigationView nvDrawer = findViewById(R.id.nvView);
+        nvDrawer = findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
         ActionBarDrawerToggle drawerToggle = setupDrawerToggle();
         drawerToggle.setDrawerIndicatorEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.white));
         drawerToggle.syncState();
+        hideItemOnAdminLogin();
+
         if (!isLocationEnabled()) {
             showAlert();
         }
         else {
-            SharedPreferences pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
-            if (pref.getString("KeyUser",null) != null) {
-                currUser =pref.getString("KeyUser",null);
+            if (userPref.getString("KeyUser",null) != null) {
+                currUser = userPref.getString("KeyUser",null);
                 if(checkIfAdmin(currUser))
                     loadStoreDetails();
                 else
@@ -110,7 +121,12 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new ActionFavorites();
                 break;
             case R.id.action_home:
-                selectedFragment = new BarberSearch();
+                if(checkIfAdmin(userPref.getString("KeyUser",null))) {
+                    selectedFragment = new StoreDetails();
+                }
+                else {
+                    selectedFragment = new BarberSearch();
+                }
                 break;
         }
         // It will help to replace the
@@ -170,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.43.202:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -214,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.43.202:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -247,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         selectDrawerItem(menuItem);
+                        if(nvDrawer.getCheckedItem() != null)
+                            nvDrawer.getCheckedItem().setChecked(false);
                         return true;
                     }
                 });
@@ -268,33 +286,41 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new EditProfile();
                 break;
             case R.id.logout:
-                SharedPreferences pref = getApplicationContext().getSharedPreferences("CurrentUserPref", 0); // 0 - for private mode
-                SharedPreferences.Editor editor = pref.edit();
-                editor.remove("KeyUser");
-                editor.remove("KeyPassword");
-                editor.apply();
-                Intent intent = new Intent(MainActivity.this, Login.class);
-                startActivity(intent);
+                logout();
                 break;
 
             default:
 //                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
         }
 
-        if(fragment != null){
+        if(fragment != null) {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.flContent, fragment)
                         .commit();
-        }
+            }
 
         // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
+//        menuItem.setChecked(false);
         // Set action bar title
         setTitle(menuItem.getTitle());
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
+
+    public void logout() {
+        SharedPreferences.Editor editor = userPref.edit();
+        editor.remove("KeyUser");
+        editor.remove("KeyPassword");
+        editor.apply();
+        Intent intent = new Intent(MainActivity.this, Login.class);
+        startActivity(intent);
+    }
+
+    public String getCurrentUserEmail() {
+        return userPref.getString("KeyUser",null);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
@@ -326,12 +352,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String getFullName(String userEmail) {
-        Customer customer = Login.customersList.stream().filter(c-> c.getUserEmail().equals(userEmail)).findAny().get();
-        if(customer != null)
+        if(!checkIfAdmin(userEmail)) {
+            Customer customer = Login.customersList.stream().filter(c-> c.getUserEmail().equals(userEmail)).findAny().get();
             return customer.getUserName() + " " + customer.getUserSurname();
+        }
         else {
             Admin admin = Login.adminsList.stream().filter(adm-> adm.getUserEmail().equals(userEmail)).findAny().get();
             return admin.getUserName() + " " + admin.getUserSurname();
+        }
+    }
+
+    private void hideItemOnAdminLogin()
+    {
+        if(checkIfAdmin(userPref.getString("KeyUser",null))) {
+            Menu nav_Menu = nvDrawer.getMenu();
+            nav_Menu.findItem(R.id.nav_new_barber).setVisible(false);
         }
     }
 }

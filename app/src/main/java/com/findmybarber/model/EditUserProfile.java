@@ -18,7 +18,7 @@ public class EditUserProfile extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        String url = "http://192.168.43.202:45455/api/user/EditUserProfile/" + userEmail + "/" + firstName + "/" + lastName;
+        String url = "http://192.168.1.27:45455/api/user/EditUserProfile/" + userEmail + "/" + firstName + "/" + lastName;
         APIReader http = new APIReader();
         http.getHTTPData(url);
         return null;
