@@ -22,16 +22,14 @@
             android:id="@+id/bt_edit_profile"
             android:layout_width="218dp"
             android:layout_height="45dp"
-            android:layout_marginBottom="321dp"
+            android:layout_marginTop="92dp"
             android:background="@drawable/bt_finish_style"
-            android:textColor="@color/white"
             android:text="@string/bt_edit_profile"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_edit_profile"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintTop_toBottomOf="@+id/editText_LastName">
 
         </Button>
 
@@ -46,48 +44,44 @@
             android:hint="@string/first_name"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/editText_LastName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title_edit_profile"
-            app:layout_constraintVertical_bias="0.035"
-            android:inputType="text" />
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintTop_toBottomOf="@+id/title_edit_profile" />
 
         <EditText
             android:id="@+id/editText_LastName"
             android:layout_width="240dp"
             android:layout_height="34dp"
-            android:layout_marginBottom="460dp"
             android:autofillHints="Store name"
             android:background="@drawable/textview_corner_style"
             android:ems="10"
             android:hint="@string/last_name"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            android:inputType="text" />
+            tools:layout_editor_absoluteY="189dp" />
 
         <TextView
             android:id="@+id/tv_error_last"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/bt_edit_profile"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.206"
+            app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editText_LastName" />
+            app:layout_constraintTop_toBottomOf="@+id/editText_LastName"
+            app:layout_constraintVertical_bias="0.0" />
 
         <TextView
             android:id="@+id/tv_error_first"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/editText_LastName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.206"
+            app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editText_FirstName"
             app:layout_constraintVertical_bias="0.0" />
@@ -96,21 +90,20 @@
             android:id="@+id/title_edit_profile"
             android:layout_width="177dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:layout_marginBottom="211dp"
+            android:layout_marginTop="40dp"
             android:gravity="center"
             android:text="@string/edit_profile"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/quantum_black_100"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.307" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/edit_logo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
