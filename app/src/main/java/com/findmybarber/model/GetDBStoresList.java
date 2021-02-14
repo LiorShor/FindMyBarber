@@ -24,7 +24,7 @@ public class GetDBStoresList  extends AsyncTask<Void, Void, List<Store>> {
 
     @Override
     protected List<Store> doInBackground(Void... voids) {
-        String url = "http://192.168.100.1:45455/api/store/getStoresList";
+        String url = "http://192.168.1.27:45455/api/store/getStoresList";
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
         List<Store> storesList = new ArrayList<>();

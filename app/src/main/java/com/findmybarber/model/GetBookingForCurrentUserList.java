@@ -29,7 +29,7 @@ public class GetBookingForCurrentUserList extends AsyncTask<Void, Void, List<Boo
         SharedPreferences sharedUserPreferences = context.getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
         String email = sharedUserPreferences.getString("KeyUser", null);
         email = email.split(".com", 2)[0];
-        String url = "http://192.168.100.1:45455/api/book/getAppointmentsForCurrentUser/" + email ;
+        String url = "http://192.168.1.27:45455/api/book/getAppointmentsForCurrentUser/" + email ;
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
         List<Book> userAppointmentsList = new ArrayList<>();

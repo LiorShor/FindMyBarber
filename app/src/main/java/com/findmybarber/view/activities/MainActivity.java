@@ -35,6 +35,7 @@ import com.android.volley.toolbox.Volley;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Customer;
 import com.findmybarber.model.Store;
+import com.findmybarber.view.fragments.About;
 import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.100.1:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.100.1:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -294,6 +295,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_edit_profile:
                 fragment = new EditProfile();
+                break;
+            case R.id.nav_about:
+                fragment = new About();
                 break;
             case R.id.logout:
                 logout();
