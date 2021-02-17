@@ -47,4 +47,12 @@ public class Customer implements User {
     public String getUserPassword() {
         return Password;
     }
+
+    public void setFirstName(String firstName) {
+        FirstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        LastName = lastName;
+    }
 }

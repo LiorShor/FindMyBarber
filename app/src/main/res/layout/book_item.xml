@@ -4,18 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".view.fragments.BarberSearch">
+    tools:context=".view.fragments.ActionMe">
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="53dp"
-        android:layout_height="42dp"
+        android:layout_width="60dp"
+        android:layout_height="40dp"
         android:contentDescription="@string/image"
-        android:src="@drawable/barber_shop"
+        android:src="@drawable/scissors"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.222" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/storename"
@@ -42,6 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/description"
         app:layout_constraintVertical_bias="1.0" />
 
+
     <TextView
         android:id="@+id/description"
         android:layout_width="260dp"
@@ -56,7 +56,7 @@
         app:layout_constraintVertical_bias="0.073" />
 
     <Button
-        android:id="@+id/bookNow"
+        android:id="@+id/bookAgain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -67,6 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
-        android:text="@string/book_now"/>
+        android:text="@string/bookagain"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

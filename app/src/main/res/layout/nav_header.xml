@@ -2,17 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="192dp"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@mipmap/artboard1mdpi"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.DayNight"
     android:orientation="vertical"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    tools:context=".view.activities.MainActivity">
 
     <TextView
+        android:id="@+id/textHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Header"
-        android:textColor="@android:color/white"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </LinearLayout>
