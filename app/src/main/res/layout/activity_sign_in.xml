@@ -15,6 +15,7 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/card_style"
         app:cardCornerRadius="45dp"
+        app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">

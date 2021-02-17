@@ -38,6 +38,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     private static final String TAG = "GetStores";
     public static List<Store> storesList = new ArrayList<>();
 
+
     public GetStores(final Context context){
         this.context = context;
     }
@@ -46,7 +47,6 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     protected void onPreExecute() {
         super.onPreExecute();
         urlString = find_Location(context);
-//        getStoresList();
     }
 
     @Override
@@ -154,6 +154,7 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
         StringBuilder sb = new StringBuilder();
         String API_KEY = "key=AIzaSyBoNid_8AbvsVzffJxtz9ODguZRx8Hv6A0";
         String API_LINK = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=";
+
         String radius = "radius=3000&";
         String type = "type=hair_care&";
         String latitude = String.valueOf(selfLatitude);

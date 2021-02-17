@@ -1,17 +1,21 @@
 package com.findmybarber.view.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,15 +42,18 @@ import com.findmybarber.model.Store;
 import com.findmybarber.view.fragments.About;
 import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
+import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
 import com.findmybarber.view.fragments.ActionFavorites;
 import com.findmybarber.view.fragments.ActionMe;
 import com.findmybarber.view.fragments.AddBarber;
+import com.findmybarber.model.GetStorePhone;
+import com.findmybarber.model.Store;
+import com.findmybarber.view.fragments.AdminManagement;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -57,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -64,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private String currUser;
     private FragmentManager fragmentManager;
+    EditText searchText;
+    private Dialog callDialog;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
     public static List<Book> appointmentsForUserList = new ArrayList<>();
@@ -111,10 +121,19 @@ public class MainActivity extends AppCompatActivity {
         else {
             if (userPref.getString("KeyUser",null) != null) {
                 currUser = userPref.getString("KeyUser",null);
-                if(checkIfAdmin(currUser))
-                    loadStoreDetails();
-                else
+                if(checkIfAdmin(currUser)) {
+                    Admin userAdmin = Login.adminsList.stream().filter(admin -> admin.getUserEmail().equals(currUser)).findAny().orElse(null);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("StoreID",userAdmin.getStoreID());
+                    editor.apply();
+                    loadAdminManagement();
+
+                }
+                else{
                     loadFirstFragment();
+                    callDialog = new Dialog(this,R.style.PauseDialog);
+                    callDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                }
             }
         }
     }
@@ -204,7 +223,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONArray response) {
                 try {
-                    Gson gson = new Gson();
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         String id = jsonObject.getString("ID");
@@ -240,9 +258,9 @@ public class MainActivity extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void postBookAppointment(Book book){
+    public static void postBookAppointment(Context context,Book book){
         String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {
             postData.put("ID", book.getID());
@@ -352,11 +370,50 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.flContent, new BarberSearch()).commit();
     }
-
+    public void loadAdminManagement() {
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+       fragmentTransaction.add(R.id.flContent, new AdminManagement()).commit();
+    }
     public void loadStoreDetails() {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContent, new StoreDetails()).addToBackStack(null).commit();
+    }
+
+    public void SearchStore(View view) {
+        searchText = findViewById(R.id.searchText);
+        String storeName = searchText.getText().toString().toLowerCase();
+        Store store = Login.dbStoresList.stream().filter(store1 -> store1.getName().toLowerCase().equals(storeName)).findAny().orElse(null);
+        if(store == null) { //Search in Google API
+            GetStorePhone getStorePhone = new GetStorePhone(storeName,getApplicationContext());
+            try {
+                String phoneNumber = getStorePhone.execute().get();
+                callDialog.setContentView(R.layout.calldialog);
+                callDialog.show();
+                Button callNow = callDialog.findViewById(R.id.call);
+                callNow.setOnClickListener(view1 -> {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + phoneNumber));//change the number
+                    getApplicationContext().startActivity(callIntent);
+                });
+                Button cancel = callDialog.findViewById(R.id.cancel);
+                cancel.setOnClickListener(view1 -> callDialog.dismiss());
+
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            loadStoreDetails();
+            SharedPreferences sharedPreferences;
+            sharedPreferences = getSharedPreferences("store", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("storeName", store.getName());
+            editor.putString("storeID", store.getID());
+            editor.apply();
+        }
     }
 
     public void loadBarberSearch() {

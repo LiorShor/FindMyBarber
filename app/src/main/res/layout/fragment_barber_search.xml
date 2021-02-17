@@ -7,8 +7,8 @@
         android:layout_height="match_parent"
         tools:context=".view.activities.MainActivity">
 
-        <TextView
-            android:id="@+id/textView"
+        <EditText
+            android:id="@+id/searchText"
             android:layout_width="321dp"
             android:layout_height="42dp"
             android:background="@drawable/search_bt_style"
@@ -45,11 +45,12 @@
             android:paddingStart="6dp"
             android:paddingEnd="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="@+id/searchText"
             app:layout_constraintHorizontal_bias="0.966"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.028" />
+            app:layout_constraintVertical_bias="0.035"
+            android:onClick="SearchStore"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/storeslist"
