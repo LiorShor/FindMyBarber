@@ -129,8 +129,8 @@
 
         <TextView
             android:id="@+id/tv_error_4"
-            android:layout_width="4dp"
-            android:layout_height="18dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintStart_toStartOf="parent"

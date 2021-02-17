@@ -12,7 +12,7 @@ public class GetAdminList extends AsyncTask<Void, Void, List<Admin>> {
 
     @Override
     protected List<Admin> doInBackground(Void... voids) {
-        String url = "http://192.168.100.1:45455/api/user/getUserAdminsList";
+        String url = "http://192.168.1.27:45455/api/user/getUserAdminsList";
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
         List<Admin> adminsList = new ArrayList<>();

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.findmybarber.R;
 
@@ -64,7 +65,7 @@ public class About extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View aboutPage =  new AboutPage(getContext())
+        View aboutPage = new AboutPage(getContext())
                 .isRTL(false)
                 .setDescription(getString(R.string.app_description))
                 .addEmail("liorshor123@gmail.com", "Lior's Email")
@@ -74,7 +75,6 @@ public class About extends Fragment {
                 .addFacebook("idan.pollak", "Idan's Facebook")
                 .addGroup(getString(R.string.contact_group))
                 .create();
-        aboutPage.setBackgroundColor(0);
         return aboutPage;
     }
 }
