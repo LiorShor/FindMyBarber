@@ -1,14 +1,19 @@
 package com.findmybarber.view.activities;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,26 +35,29 @@ import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
+import com.findmybarber.model.GetStorePhone;
+import com.findmybarber.model.Store;
 import com.findmybarber.view.fragments.AdminManagement;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private String currUser;
     private FragmentManager fragmentManager;
+    EditText searchText;
+    private Dialog callDialog;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
 //    public static List<Store> dbStoresList = new ArrayList<>();
@@ -67,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mDrawer = findViewById(R.id.drawer_layout);
+
         NavigationView nvDrawer = findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
         ActionBarDrawerToggle drawerToggle = setupDrawerToggle();
@@ -89,8 +98,11 @@ public class MainActivity extends AppCompatActivity {
                     loadAdminManagement();
 
                 }
-                else
+                else{
                     loadFirstFragment();
+                    callDialog = new Dialog(this,R.style.PauseDialog);
+                    callDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                }
             }
         }
     }
@@ -299,5 +311,40 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContent, new StoreDetails()).addToBackStack(null).commit();
+    }
+
+    public void SearchStore(View view) {
+        searchText = findViewById(R.id.searchText);
+        String storeName = searchText.getText().toString().toLowerCase();
+        Store store = Login.dbStoresList.stream().filter(store1 -> store1.getName().toLowerCase().equals(storeName)).findAny().orElse(null);
+        if(store == null) { //Search in Google API
+            GetStorePhone getStorePhone = new GetStorePhone(storeName,getApplicationContext());
+            try {
+                String phoneNumber = getStorePhone.execute().get();
+                callDialog.setContentView(R.layout.calldialog);
+                callDialog.show();
+                Button callNow = callDialog.findViewById(R.id.call);
+                callNow.setOnClickListener(view1 -> {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + phoneNumber));//change the number
+                    getApplicationContext().startActivity(callIntent);
+                });
+                Button cancel = callDialog.findViewById(R.id.cancel);
+                cancel.setOnClickListener(view1 -> callDialog.dismiss());
+
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else
+        {
+            loadStoreDetails();
+            SharedPreferences sharedPreferences;
+            sharedPreferences = getSharedPreferences("store", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("storeName", store.getName());
+            editor.putString("storeID", store.getID());
+            editor.apply();
+        }
     }
 }

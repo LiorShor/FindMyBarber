@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class GetBookingList extends AsyncTask<Void, Void, List<Book>> {
-    private String storeID;
+    private final String storeID;
 
     public GetBookingList(String storeID) {
         this.storeID = storeID;

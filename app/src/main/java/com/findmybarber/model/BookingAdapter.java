@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static com.findmybarber.view.fragments.AdminManagement.bookingListForDay;
+
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHolder> {
     private final SimpleDateFormat dateFormatForDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private final SimpleDateFormat dateFormatForTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -60,7 +62,6 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             this.bookingInfo = itemView.findViewById(R.id.text);
         }
     }
-    // Create new views (invoked by the layout manager)
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -68,6 +69,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         LayoutInflater inflater = LayoutInflater.from(context);
         View bookView = inflater.inflate(R.layout.event_item, parent, false);
         modifyBookingDialog = new Dialog(context,R.style.PauseDialog);
+
         modifyBookingDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         return new ViewHolder(bookView);
 
@@ -76,7 +78,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        String book = mBookString.get(position);
+        String book = mBookString.get(viewHolder.getAdapterPosition());
         Button editButton = viewHolder.itemView.findViewById(R.id.editButton);
         viewHolder.bookingInfo.setText(book);
         editButton.setOnClickListener(view -> {
@@ -89,6 +91,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             }
             modifyBookingDialog.setContentView(R.layout.edit_meeting);
             modifyBookingDialog.show();
+            modifyBookingDialog.setCanceledOnTouchOutside(true);
             ImageView dismiss = modifyBookingDialog.findViewById(R.id.dismiss);
             TextView bookingWith = modifyBookingDialog.findViewById(R.id.meetingWith);
             EditText timeEditText = modifyBookingDialog.findViewById(R.id.timeEditText);
@@ -99,15 +102,16 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             EditText dateEditText = modifyBookingDialog.findViewById(R.id.dateEditText);
             dateEditText.setText(modifyBook.getDate());
             dismiss.setOnClickListener(view1 -> modifyBookingDialog.dismiss());
-            saveChanges(modifyBook,dateEditText,timeEditText,position);
+            saveChanges(modifyBook,dateEditText,timeEditText,viewHolder.getAdapterPosition());
         });
         Button deleteButton =  viewHolder.itemView.findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(view1 -> {
             Book modifyBook = mBook.get(viewHolder.getAdapterPosition());
             AdminManagement.bookingList.remove(modifyBook);
+            mBook.remove(viewHolder.getAdapterPosition());
             mBookString.remove(viewHolder.getAdapterPosition());
             RemoveFromDBPost(context,modifyBook);
-            notifyItemRemoved(position);
+            notifyItemRemoved(viewHolder.getAdapterPosition());
             itemCallback.updateCompactCalendarView();
 
         });
@@ -130,6 +134,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             editButton.setVisibility(View.VISIBLE);
             deleteButton.setVisibility(View.VISIBLE);
         }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -180,6 +185,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
 
     public interface ItemCallback {
         void updateCompactCalendarView();
+        void updateList();
     }
 
     public void saveChanges(Book modifyBook,TextView dateEditText,TextView timeEditText,int position){
@@ -203,9 +209,10 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
             EditDBPost(context,modifyBook);
             modifyBookingDialog.dismiss();
             itemCallback.updateCompactCalendarView();
+            itemCallback.updateList();
             mBook.clear();
             mBookString.clear();
-            notifyItemRemoved(position);
+            notifyItemChanged(position);
         });
     }
     public void setContactPhone()

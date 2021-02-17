@@ -60,7 +60,7 @@
             <Button
                 android:id="@+id/saveChanges"
                 android:layout_width="240dp"
-                android:layout_height="34dp"
+                android:layout_height="50dp"
                 android:background="@drawable/bt_finish_style"
                 android:text="@string/save"
                 android:textColor="@color/white"
@@ -207,6 +207,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
+                android:textColor="@color/buttonColor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.076"
                 app:layout_constraintStart_toEndOf="@+id/phonenumbertxt"

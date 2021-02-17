@@ -8,14 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Toast;
-
-import androidx.fragment.app.FragmentActivity;
 
 import com.findmybarber.R;
-import com.findmybarber.view.activities.Login;
-import com.findmybarber.view.activities.MainActivity;
-import com.findmybarber.view.fragments.StoreDetails;
 
 import java.util.List;
 
@@ -23,18 +17,18 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class ButtonAdapter extends BaseAdapter
 {
-    private Context mContext;
-    private String timeSlots[];
+    private final Context mContext;
+    private final String[] timeSlots;
 
-    private List<String> takenTimeSlots;
-    private LayoutInflater inflter;
+    private final List<String> takenTimeSlots;
+    private final LayoutInflater inflater;
     private static View prevView = null;
 
     public ButtonAdapter(Context context, List<String> takenTimeSlots) {
         this.mContext = context;
         this.takenTimeSlots = takenTimeSlots;
         this.timeSlots = new String[36];
-        inflter = (LayoutInflater.from(context));
+        inflater = (LayoutInflater.from(context));
 
         int k = 0;
         for(int i = 10; i < 19; i++)
@@ -69,38 +63,38 @@ public class ButtonAdapter extends BaseAdapter
         View grid;
 
         if(convertView == null){
-            grid = new View(mContext);
-            grid = inflter.inflate(R.layout.timeslot, parent, false);
+            grid = inflater.inflate(R.layout.timeslot, parent, false);
+            Button button = grid.findViewById(R.id.button); // get the reference of ImageView
+            button.setTextColor(Color.WHITE);
+            button.setText(timeSlots[position]);
+            if(takenTimeSlots.contains(button.getText().toString()+":00"))
+            {
+                button.setClickable(false);
+                button.setAlpha(.5f);
+                button.setEnabled(false);
+            }
+
+            button.setOnClickListener(view -> {
+                SharedPreferences sharedPreferences;
+                sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
+                if(prevView!= null)
+                {
+                    Button button1 = prevView.findViewById(R.id.button);
+                    button1.setBackgroundResource(R.drawable.timeslot);
+                    button1.setTextColor(Color.WHITE);
+                }
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("timeSlot", button.getText().toString());
+                prevView = view;
+                editor.apply();
+                button.setBackgroundResource(R.drawable.selectedtimeslot);
+                button.setTextColor(Color.RED);
+            });
+
         }else{
             grid = (View)convertView;
         }
 
-        Button button = grid.findViewById(R.id.button); // get the reference of ImageView
-        button.setTextColor(Color.WHITE);
-        button.setText(timeSlots[position]);
-        if(takenTimeSlots.contains(button.getText().toString()+":00"))
-        {
-            button.setClickable(false);
-            button.setAlpha(.5f);
-            button.setEnabled(false);
-        }
-
-        button.setOnClickListener(view -> {
-            SharedPreferences sharedPreferences;
-            sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
-            if(prevView!= null)
-            {
-               Button button1 = prevView.findViewById(R.id.button);
-                button1.setBackgroundResource(R.drawable.timeslot);
-                button1.setTextColor(Color.WHITE);
-            }
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("timeSlot", button.getText().toString());
-            prevView = view;
-            editor.apply();
-            button.setBackgroundResource(R.drawable.selectedtimeslot);
-            button.setTextColor(Color.RED);
-        });
         return grid;
 
     }

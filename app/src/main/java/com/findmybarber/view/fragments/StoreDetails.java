@@ -1,6 +1,5 @@
 package com.findmybarber.view.fragments;
 
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
@@ -9,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -21,7 +19,6 @@ import com.findmybarber.model.ButtonAdapter;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -95,8 +92,6 @@ public class StoreDetails extends Fragment {
         textView.setText(sharedPreferences.getString("storeName", null));
         storeID = sharedPreferences.getString("storeID", null);
         Button createAppointment = view.findViewById(R.id.makeAppointment);
-        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
         GridView gridview = view.findViewById(R.id.gridview);
         gridview.setAdapter(new ButtonAdapter(getContext(),takenTimeSlots));
         gridview.setNumColumns(4);
@@ -115,8 +110,7 @@ public class StoreDetails extends Fragment {
                 currMonth.setText(dateFormatForMonth.format(dateClicked));
 //                List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 calendar.setTimeInMillis(dateClicked.getTime());
-                //noinspection CollectionAddedToSelf
-                takenTimeSlots.removeAll(takenTimeSlots);
+                takenTimeSlots.clear();
                 for (Book book:bookingsList) {
                     if(book.getDate().equals(dateFormatForDate.format(dateClicked)))
                         takenTimeSlots.add(book.getTime().toString());
@@ -129,7 +123,6 @@ public class StoreDetails extends Fragment {
                 currMonth.setText(dateFormatForMonth.format(firstDayOfNewMonth));
             }
         });
-        Calendar lastSelectedCalendar = Calendar.getInstance();
         createAppointment.setOnClickListener(view1 -> {
             String storeName = sharedPreferences.getString("storeName", null);
             String clientEmail = sharedUserPreferences.getString("KeyUser", null);
@@ -156,7 +149,7 @@ public class StoreDetails extends Fragment {
             MainActivity mainActivity = (MainActivity) getActivity();
             bookingsList.add(book);
             assert mainActivity != null;
-            mainActivity.postBookAppointment(getContext(),book);
+            MainActivity.postBookAppointment(getContext(),book);
             Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
             mainActivity.onBackPressed();
         });

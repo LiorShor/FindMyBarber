@@ -17,6 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/card_style"
+        app:cardElevation="8dp"
             app:cardCornerRadius="45dp">
 
 
@@ -122,6 +123,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/bt_finish_style"
                 android:text="@string/finish"
+                android:textColor="@color/white"
                 android:onClick="register"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

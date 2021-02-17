@@ -2,22 +2,17 @@ package com.findmybarber.view.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -35,12 +30,10 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
-import com.findmybarber.model.Book;
 import com.findmybarber.model.Customer;
 import com.findmybarber.model.GetAdminList;
 import com.findmybarber.model.Registration;
 import com.findmybarber.model.Store;
-import com.findmybarber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -60,12 +53,9 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.security.Permissions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -103,7 +93,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_login);
 
         getCustomersList();
-//        getAdminsList();
         GetAdminList getAdminList = new GetAdminList();
         try {
             adminsList.addAll(getAdminList.execute().get());
@@ -142,16 +131,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
             }
         }).check();
-//        ConnectToDatabase();
     }
-
-
-/*
-    public void getMixedList() {
-        usersList.addAll(customersList);
-        usersList.addAll(adminsList);
-    }
-*/
 
     public void getCustomersList() {
         String url = "http://192.168.1.2:45455/api/user/getUserClientsList";
@@ -180,34 +160,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         requestQueue.add(jsonArrayRequest);
     }
 
-
-    /*public void getAdminsList() {
-        String url = "http://192.168.1.2:45455/api/user/getUserAdminsList";
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                try {
-                    Gson gson = new Gson();
-                    for (int i = 0; i < response.length(); i++) {
-                        JSONObject jsonObject = response.getJSONObject(i);
-                        Admin admin = gson.fromJson(jsonObject.toString(), Admin.class);
-                        adminsList.add(admin);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-        requestQueue.add(jsonArrayRequest);
-    }
-*/
     @Override
     public void onStart() {
         super.onStart();
@@ -300,10 +252,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void showRegisterDialog(){
-/*        threadRunnable runnable = new threadRunnable();
-        new Thread(runnable).start();*/
         registerDialog.setContentView(R.layout.activity_registration);
         registerDialog.show();
+        registerDialog.setCanceledOnTouchOutside(true);
 
     }
 
@@ -321,11 +272,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void showLoginDialog(View view) {
-/*        threadRunnable runnable = new threadRunnable();
-        new Thread(runnable).start();*/
         loginDialog.setContentView(R.layout.activity_sign_in);
         loginDialog.show();
-//        goToRegister(view);
+        loginDialog.setCanceledOnTouchOutside(true);
     }
 
     public void loginFunc(View view) {
@@ -361,6 +310,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     public void goToRegister(View view) {
         loginDialog.dismiss();
         registerDialog = new Dialog(this, R.style.PauseDialog);
+        registerDialog.setCanceledOnTouchOutside(true);
         registerDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         showRegisterDialog();
     }
@@ -375,8 +325,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
-/*        threadRunnable runnable = new threadRunnable();
-        new Thread(runnable).start();*/
     }
 
     private void signOut() {
@@ -388,29 +336,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         });
     }
 
-    public void loginWithFireBase(String email,String password){
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
 
-                            Toast.makeText(Login.this, "Authentication succsess.",
-                                    Toast.LENGTH_SHORT).show();
-//                                FirebaseUser user = mAuth.getCurrentUser();
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            startActivity(intent);
-                            // Sign in success, update UI with the signed-in user's information
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.d(TAG, "onComplete: ",task.getException());
-                            Toast.makeText(Login.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // ...
-                    }
-                });
-    }
     public void facebookLogin(View view) {
         LoginButton loginButton = findViewById(R.id.login_button);
         loginButton.setPermissions(Arrays.asList(EMAIL,USERNAME));
@@ -506,22 +432,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
             Log.w(TAG, "handleSignInResult:error", e);
             Toast.makeText(this, "fuck", Toast.LENGTH_SHORT).show();
 
-        }
-    }
-
-    class threadRunnable implements Runnable{
-        @Override
-        public void run() {
-            Handler mainHandler = new Handler(Looper.getMainLooper());
-            mainHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    loginDialog.setContentView(R.layout.activity_sign_in);
-                    loginDialog.show();
-/*                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                    startActivityForResult(signInIntent, RC_SIGN_IN);*/
-                }
-            });
         }
     }
 }

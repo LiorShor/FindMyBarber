@@ -69,5 +69,16 @@
     <string name="contact_details">Contact Details:</string>
     <string name="phone_number_title">Phone number:</string>
     <string name="contact_name_title">Contact name:</string>
+    <string name="please_enter_client_email">Please enter client Email:</string>
+    <string name="new_appointment">New Appointment</string>
+    <string name="please_select_available_time">Please select available time:</string>
+    <string name="not_exists">This email is not exists</string>
+    <string name="allow_location">Allow location</string>
+    <string name="you_ll_need_to_enable_your_location_in_order_to_user_findmybarber">You\'ll need to enable your location in order to use FindMyBarber</string>
+    <string name="enable_location">Enable location</string>
+    <string name="it_appears_like_this_barber_shop_is_not_on_our_service_would_you_like_to_call_them_to_book_an_appointment">It appears like this barber shop is not on our service, would you like to call them to book an appointment?</string>
+    <string name="houston_we_have_a_problem">Houston we have a problem...</string>
+    <string name="cancel">cancel</string>
+    <string name="call_now">Call Now</string>
 
 </resources>

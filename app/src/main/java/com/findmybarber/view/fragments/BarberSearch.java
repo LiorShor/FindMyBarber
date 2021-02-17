@@ -69,7 +69,6 @@ public class BarberSearch extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_barber_search, container, false);
-        // Make sure to be using androidx.appcompat.app.ActionBarDrawerToggle version.
         List<Store> storesList = new ArrayList<>();
         GetStores getStores = new GetStores(getContext());
         dbStoresList.clear();
