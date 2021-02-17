@@ -20,7 +20,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
 import com.findmybarber.view.activities.Login;
-import com.findmybarber.view.activities.MainActivity;
 import com.findmybarber.view.fragments.AdminManagement;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,8 +30,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import static com.findmybarber.view.fragments.AdminManagement.bookingListForDay;
 
 public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHolder> {
     private final SimpleDateFormat dateFormatForDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -84,7 +81,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         editButton.setOnClickListener(view -> {
             int pos = viewHolder.getAdapterPosition();
             Book modifyBook = mBook.get(pos);
-            for (User customer: Login.usersList) {
+            for (User customer: Login.customersList) {
                 if(customer.getUserEmail().equals(modifyBook.getEmailClient())) {
                     user = (Customer) customer;
                 }

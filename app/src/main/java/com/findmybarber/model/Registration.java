@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 public class Registration {
     public static boolean isEmailExist(String email) {
-        return Login.usersList.stream().anyMatch(customer -> customer.getUserEmail().toLowerCase().equals(email.toLowerCase()));
+        return Login.customersList.stream().anyMatch(customer -> customer.getUserEmail().toLowerCase().equals(email.toLowerCase()));
     }
     public static boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";

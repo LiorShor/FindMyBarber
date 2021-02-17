@@ -2,7 +2,6 @@ package com.findmybarber.view.fragments;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -30,8 +29,6 @@ import com.findmybarber.view.activities.MainActivity;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
-import org.w3c.dom.Text;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,7 +38,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -148,7 +144,7 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
                 bookingListForDay.clear();
                 for (Book book : bookingList) {
                     if(book.getDate().equals(dateFormatForDate.format(dateClicked))) {
-                        Customer customer = Login.usersList.stream().filter(user -> user.getUserEmail().toLowerCase().equals(book.getEmailClient().toLowerCase())).findFirst().orElse(null);
+                        Customer customer = Login.customersList.stream().filter(user -> user.getUserEmail().toLowerCase().equals(book.getEmailClient().toLowerCase())).findFirst().orElse(null);
                         string = "Meeting with " + customer.getUserName() + " "+ customer.getUserSurname() + " at " + book.getTime().toString();
                         bookingStringsListForDay.add(string);
                         bookingListForDay.add(book);

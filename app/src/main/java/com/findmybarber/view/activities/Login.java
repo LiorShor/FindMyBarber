@@ -81,7 +81,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Dialog loginDialog;
     private CallbackManager callbackManager;
     private FirebaseAuth mAuth;
-    public static List<Customer> usersList = new ArrayList<>();
+    public static List<Customer> customersList = new ArrayList<>();
     public static List<Admin> adminsList = new ArrayList<>();
     public static List<Store> dbStoresList = new ArrayList<>();
 
@@ -145,7 +145,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     for (int i = 0; i < response.length(); i++) {
                         JSONObject jsonObject = response.getJSONObject(i);
                         Customer customer = gson.fromJson(jsonObject.toString(), Customer.class);
-                        usersList.add(customer);
+                        customersList.add(customer);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -190,7 +190,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 //            createUser(customer);
             Registration.volleyPost(getApplicationContext(),firstName, lastName, email, phone, password);
             customer = new Customer(firstName, lastName, email, phone, password);
-            usersList.add(customer);
+            customersList.add(customer);
             registerDialog.dismiss();
         }
     }
@@ -300,7 +300,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private boolean checkCredentials(String email, String password) {
         return  adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password))
-        || usersList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password));
+        || customersList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password));
     }
 
     private boolean checkIfEmpty(String password,String email){
