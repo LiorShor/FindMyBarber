@@ -74,7 +74,7 @@ public class About extends Fragment {
                 .addFacebook("idan.pollak", "Idan's Facebook")
                 .addGroup(getString(R.string.contact_group))
                 .create();
-        aboutPage.setBackgroundColor(Color.TRANSPARENT);
+        aboutPage.setBackgroundColor(0);
         return aboutPage;
     }
 }

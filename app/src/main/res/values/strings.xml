@@ -71,5 +71,8 @@
     <string name="my_profile">My Profile</string>
     <string name="app_description">FindMyBarber is an application that have been developed to help hairdressers perform time management perfectly and make the booking appointment experience perfect for their customers</string>
     <string name="contact_group">Lior Shor, Idan Pollak</string>
+    <string name="illegal_store_name">illegal store name</string>
+    <string name="illegal_address">illegal address</string>
+    <string name="illegal_description">illegal description</string>
 
 </resources>

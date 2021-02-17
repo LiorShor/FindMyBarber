@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,6 +93,42 @@ public class EditProfile extends Fragment {
 
         firstName.setText(fullName.split(" ", 2)[0]);
         lastName.setText(fullName.split(" ", 2)[1]);
+
+        firstName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                firstName.setBackgroundResource(R.drawable.textview_corner_style);
+                errorFirst.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        lastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                lastName.setBackgroundResource(R.drawable.textview_corner_style);
+                errorLast.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         buttonEdit.setOnClickListener(v -> {
             String txtFirstName = firstName.getText().toString();

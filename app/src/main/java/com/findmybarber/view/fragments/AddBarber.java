@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +98,7 @@ public class AddBarber extends Fragment {
             String txtPhoneNumber = tvPhoneNumber.getText().toString();
             String txtDescription = tvDescription.getText().toString();
 
-            if(inputValidation(txtStoreName, txtAddress, txtPhoneNumber, txtDescription, errStoreName, errAddress, errPhoneNumber, errDescription)) {
+            if(inputValidation(txtStoreName, txtAddress, txtPhoneNumber, txtDescription, errStoreName, errAddress, errPhoneNumber, errDescription, tvStoreName, tvAddress, tvPhoneNumber, tvDescription)) {
                 GetCoordinatesByAddress getCoordinatesByAddress = new GetCoordinatesByAddress(txtAddress);
                 try {
                     String response = getCoordinatesByAddress.execute().get();
@@ -112,11 +114,114 @@ public class AddBarber extends Fragment {
                 }
             }
         });
+
+        tvStoreName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tvStoreName.setBackgroundResource(R.drawable.textview_corner_style);
+                errStoreName.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        tvAddress.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tvAddress.setBackgroundResource(R.drawable.textview_corner_style);
+                errAddress.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        tvPhoneNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tvPhoneNumber.setBackgroundResource(R.drawable.textview_corner_style);
+                errPhoneNumber.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        tvDescription.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                tvDescription.setBackgroundResource(R.drawable.textview_corner_style);
+                errDescription.setText("");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         return view;
     }
 
-    private boolean inputValidation(String txtStoreName, String txtAddress, String txtPhoneNumber, String txtDescription, TextView errStoreName, TextView errAddress, TextView errPhoneNumber, TextView errDescription) {
-       boolean flag = true;
-       return flag;
+    private boolean inputValidation(String txtStoreName, String txtAddress, String txtPhoneNumber, String txtDescription, TextView errStoreName, TextView errAddress, TextView errPhoneNumber, TextView errDescription, TextView tvStoreName, TextView tvAddress, TextView tvPhoneNumber, TextView tvDescription) {
+        boolean flag = true;
+        
+        if(txtStoreName.isEmpty()) {
+            tvStoreName.setBackgroundResource(R.drawable.red_error_style);
+            errStoreName.setText(R.string.this_is_req);
+            flag = false;
+        }
+
+        if(txtAddress.isEmpty()) {
+            tvAddress.setBackgroundResource(R.drawable.red_error_style);
+            errAddress.setText(R.string.this_is_req);
+            flag = false;
+        }
+
+        if(txtPhoneNumber.length() != 10) {
+            tvPhoneNumber.setBackgroundResource(R.drawable.red_error_style);
+            errPhoneNumber.setText(R.string.illegal_phone);
+            flag = false;
+        }
+
+        if(txtPhoneNumber.isEmpty()) {
+            tvPhoneNumber.setBackgroundResource(R.drawable.red_error_style);
+            errPhoneNumber.setText(R.string.this_is_req);
+            flag = false;
+        }
+
+        if(txtDescription.isEmpty()) {
+            tvDescription.setBackgroundResource(R.drawable.red_error_style);
+            errDescription.setText(R.string.this_is_req);
+            flag = false;
+        }
+        return flag;
     }
 }
