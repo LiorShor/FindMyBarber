@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Registration {
     public static boolean
     isEmailExist(String email) {
-        return Login.usersList.stream().anyMatch(customer -> customer.getUserEmail().equals(email));
+        return Login.customersList.stream().anyMatch(customer -> customer.getUserEmail().equals(email));
     }
     public static boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
@@ -28,7 +28,7 @@ public class Registration {
         return m.matches();
     }
     public static void volleyPost(Context context, String  firstName, String lastName, String email, String phoneNumber, String password){
-        String postUrl = "http://192.168.1.2:45455/api/user/addUser";
+        String postUrl = "http://192.168.1.27:45455/api/user/addUser";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 //        String id = UUID.randomUUID().toString().replace("-", "");
         JSONObject postData = new JSONObject();

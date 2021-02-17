@@ -55,7 +55,7 @@ public class ButtonAdapter extends BaseAdapter
     public Object getItem(int i) {
         return timeSlots[i];
     }
-
+    
     @Override
     public long getItemId(int i) {
         return i;

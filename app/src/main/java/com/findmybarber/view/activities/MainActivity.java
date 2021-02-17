@@ -8,7 +8,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,28 +23,41 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.findmybarber.model.Admin;
+import com.findmybarber.model.Customer;
+import com.findmybarber.model.Store;
+import com.findmybarber.view.fragments.About;
+import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
+import com.findmybarber.view.fragments.ActionFavorites;
+import com.findmybarber.view.fragments.ActionMe;
+import com.findmybarber.view.fragments.AddBarber;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
@@ -50,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private FragmentManager fragmentManager;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
-//    public static List<Store> dbStoresList = new ArrayList<>();
+    public static List<Book> appointmentsForUserList = new ArrayList<>();
+    private NavigationView nvDrawer;
+    private SharedPreferences userPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,27 +76,41 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: ");
         // Set a Toolbar to replace the ActionBar.
-//        getStoresList();
+
+        userPref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navListener);
+
         mDrawer = findViewById(R.id.drawer_layout);
-        NavigationView nvDrawer = findViewById(R.id.nvView);
+        nvDrawer = findViewById(R.id.nvView);
         setupDrawerContent(nvDrawer);
+
+
         ActionBarDrawerToggle drawerToggle = setupDrawerToggle();
         drawerToggle.setDrawerIndicatorEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         drawerToggle.getDrawerArrowDrawable().setColor(ContextCompat.getColor(this, R.color.white));
         drawerToggle.syncState();
+        hideItemOnAdminLogin();
+
+        View headerView = nvDrawer.getHeaderView(0);
+        TextView tvHeader = headerView.findViewById(R.id.textHeader);
+        tvHeader.setText("Hello " + getFullName(userPref.getString("KeyUser",null)));
+
+
         if (!isLocationEnabled()) {
             showAlert();
         }
         else {
-            SharedPreferences pref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
-            if (pref.getString("KeyUser",null) != null) {
-                currUser =pref.getString("KeyUser",null);
+            if (userPref.getString("KeyUser",null) != null) {
+                currUser = userPref.getString("KeyUser",null);
                 if(checkIfAdmin(currUser))
                     loadStoreDetails();
                 else
@@ -86,6 +118,36 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
+        // By using switch we can easily get
+        // the selected fragment
+        // by using there id.
+        Fragment selectedFragment = null;
+        switch (item.getItemId()) {
+            case R.id.action_me:
+                selectedFragment = new ActionMe();
+                break;
+            case R.id.action_favorites:
+                selectedFragment = new ActionFavorites();
+                break;
+            case R.id.action_home:
+                if(checkIfAdmin(userPref.getString("KeyUser",null))) {
+                    selectedFragment = new StoreDetails();
+                }
+                else {
+                    selectedFragment = new BarberSearch();
+                }
+                break;
+        }
+        // It will help to replace the
+        // one fragment to other.
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.flContent, selectedFragment)
+                .commit();
+        return true;
+    };
 
     public boolean checkIfAdmin(String email) {
         return Login.adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email));
@@ -135,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -179,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void postBookAppointment(Book book){
-        String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         JSONObject postData = new JSONObject();
         try {
@@ -212,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         selectDrawerItem(menuItem);
+                        if(nvDrawer.getCheckedItem() != null)
+                            nvDrawer.getCheckedItem().setChecked(false);
                         return true;
                     }
                 });
@@ -224,48 +288,53 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass = null; //TODO: DELETE
+
         switch(menuItem.getItemId()) {
-            case R.id.nav_first_fragment:
-//                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
+            case R.id.nav_new_barber:
+                fragment = new AddBarber();
                 break;
-            case R.id.nav_second_fragment:
-//                fragmentClass = SecondFragment.class; //TODO: navigate to another activity
+            case R.id.nav_edit_profile:
+                fragment = new EditProfile();
                 break;
-            case R.id.nav_third_fragment:
-//                fragmentClass = ThirdFragment.class; //TODO: navigate to another activity
+            case R.id.nav_about:
+                fragment = new About();
                 break;
             case R.id.logout:
-                SharedPreferences pref = getApplicationContext().getSharedPreferences("CurrentUserPref", 0); // 0 - for private mode
-                SharedPreferences.Editor editor = pref.edit();
-                editor.remove("KeyUser");
-                editor.remove("KeyPassword");
-                editor.apply();
+                logout();
                 break;
 
             default:
 //                fragmentClass = FirstFragment.class; //TODO: navigate to another activity
         }
 
-        try {
-            assert fragmentClass != null;
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        assert fragment != null;
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        if(fragment != null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.flContent, fragment)
+                        .commit();
+            }
 
         // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
+//        menuItem.setChecked(false);
         // Set action bar title
         setTitle(menuItem.getTitle());
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
+
+    public void logout() {
+        SharedPreferences.Editor editor = userPref.edit();
+        editor.remove("KeyUser");
+        editor.remove("KeyPassword");
+        editor.apply();
+        Intent intent = new Intent(MainActivity.this, Login.class);
+        startActivity(intent);
+    }
+
+    public String getCurrentUserEmail() {
+        return userPref.getString("KeyUser",null);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // The action bar home/up action should open or close the drawer.
@@ -288,5 +357,30 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.flContent, new StoreDetails()).addToBackStack(null).commit();
+    }
+
+    public void loadBarberSearch() {
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.flContent, new BarberSearch()).addToBackStack(null).commit();
+    }
+
+    public String getFullName(String userEmail) {
+        if(!checkIfAdmin(userEmail)) {
+            Customer customer = Login.customersList.stream().filter(c-> c.getUserEmail().equals(userEmail)).findAny().get();
+            return customer.getUserName() + " " + customer.getUserSurname();
+        }
+        else {
+            Admin admin = Login.adminsList.stream().filter(adm-> adm.getUserEmail().equals(userEmail)).findAny().get();
+            return admin.getUserName() + " " + admin.getUserSurname();
+        }
+    }
+
+    private void hideItemOnAdminLogin()
+    {
+        if(checkIfAdmin(userPref.getString("KeyUser",null))) {
+            Menu nav_Menu = nvDrawer.getMenu();
+            nav_Menu.findItem(R.id.nav_new_barber).setVisible(false);
+        }
     }
 }
