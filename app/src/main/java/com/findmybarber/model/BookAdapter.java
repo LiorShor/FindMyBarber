@@ -136,7 +136,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                 mBookings.add(book1);
                 MainActivity mainActivity = (MainActivity) mFragmentActivity;
                 assert mainActivity != null;
-                mainActivity.postBookAppointment(book1);
+                mainActivity.postBookAppointment(mFragmentActivity.getApplicationContext(), book1);
                 Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 notifyItemInserted(getItemCount());

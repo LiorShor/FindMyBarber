@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 currUser = userPref.getString("KeyUser",null);
                 if(checkIfAdmin(currUser)) {
                     Admin userAdmin = Login.adminsList.stream().filter(admin -> admin.getUserEmail().equals(currUser)).findAny().orElse(null);
-                    SharedPreferences.Editor editor = pref.edit();
+                    SharedPreferences.Editor editor = userPref.edit();
                     editor.putString("StoreID",userAdmin.getStoreID());
                     editor.apply();
                     loadAdminManagement();
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action_home:
                 if(checkIfAdmin(userPref.getString("KeyUser",null))) {
-                    selectedFragment = new StoreDetails();
+                    selectedFragment = new AdminManagement();
                 }
                 else {
                     selectedFragment = new BarberSearch();

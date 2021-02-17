@@ -19,7 +19,7 @@ public class GetBookingList extends AsyncTask<Void, Void, List<Book>> {
 
     @Override
     protected List<Book> doInBackground(Void... voids) {
-        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
         List<Book> bookingsList = new ArrayList<>();
