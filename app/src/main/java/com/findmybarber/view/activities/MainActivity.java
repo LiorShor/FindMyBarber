@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 currUser = userPref.getString("KeyUser",null);
                 if(checkIfAdmin(currUser)) {
                     Admin userAdmin = Login.adminsList.stream().filter(admin -> admin.getUserEmail().equals(currUser)).findAny().orElse(null);
-                    SharedPreferences.Editor editor = pref.edit();
+                    SharedPreferences.Editor editor = userPref.edit();
                     editor.putString("StoreID",userAdmin.getStoreID());
                     editor.apply();
                     loadAdminManagement();
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void postBookAppointment(Context context,Book book){
-        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {
