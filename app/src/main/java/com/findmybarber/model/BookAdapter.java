@@ -134,10 +134,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
                 Book book1 = new Book(id.toString(), store.getID(), sharedPreferences.getString("KeyUser",null), userEmail, calendar);
                 bookingsList.add(book1);
                 mBookings.add(book1);
-                MainActivity mainActivity = (MainActivity) mFragmentActivity;
-                assert mainActivity != null;
-                mainActivity.postBookAppointment(mFragmentActivity.getApplicationContext(), book1);
-                Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
+                MainActivity.postBookAppointment(holder.context, book1);
+                Toast.makeText(holder.context, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 notifyItemInserted(getItemCount());
             } catch (ExecutionException | InterruptedException e) {
