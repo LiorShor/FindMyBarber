@@ -13,12 +13,4 @@
         <item name="android:windowEnterAnimation">@anim/fade_in_anim</item>
         <item name="android:windowExitAnimation">@anim/fade_out_anim</item>
     </style>
-
-    <style name="about_About.wrapper">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:orientation">vertical</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">#00ff00</item>
-    </style>
 </resources>
