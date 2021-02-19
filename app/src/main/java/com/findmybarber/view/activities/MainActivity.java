@@ -317,6 +317,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_about:
                 fragment = new About();
                 break;
+            case R.id.nav_home:
+                if(checkIfAdmin(userPref.getString("KeyUser",null))) {
+                    fragment = new AdminManagement();
+                }
+                else {
+                    fragment = new BarberSearch();
+                }
+                break;
             case R.id.logout:
                 logout();
                 break;

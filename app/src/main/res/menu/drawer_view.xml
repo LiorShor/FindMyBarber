@@ -3,24 +3,30 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/icon_home"
+            android:title="Home Page" />
+        <item
             android:id="@+id/nav_new_barber"
             android:icon="@drawable/icon_add_store"
             android:title="New barber?" />
-        <item
-            android:id="@+id/nav_edit_profile"
-            android:icon="@drawable/icon_edit"
-            android:title="Edit profile" />
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/icon_about"
             android:title="About" />
     </group>
-    <item android:title="Switch user">
+    <item android:title="Settings">
         <menu>
             <group android:checkableBehavior="single">
-<!--                <item-->
-<!--                    android:icon="@drawable/ic_menu"-->
-<!--                    android:title="Sub item 1" />-->
+                <item
+                    android:id="@+id/nav_edit_profile"
+                    android:icon="@drawable/icon_edit"
+                    android:title="Edit profile" />
+            </group>
+        </menu>
+    </item><item android:title="Switch user">
+        <menu>
+            <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/logout"
                     android:icon="@drawable/icon_logout"
