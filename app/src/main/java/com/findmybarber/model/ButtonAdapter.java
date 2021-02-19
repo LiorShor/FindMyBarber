@@ -3,6 +3,7 @@ package com.findmybarber.model;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class ButtonAdapter extends BaseAdapter
     private final List<String> takenTimeSlots;
     private final LayoutInflater inflater;
     private static View prevView = null;
-
+    private static final String TAG = "ButtonAdapter";
     public ButtonAdapter(Context context, List<String> takenTimeSlots) {
         this.mContext = context;
         this.takenTimeSlots = takenTimeSlots;
@@ -75,6 +76,7 @@ public class ButtonAdapter extends BaseAdapter
             }
 
             button.setOnClickListener(view -> {
+                Log.d(TAG, "Position: "+position);
                 SharedPreferences sharedPreferences;
                 sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
                 if(prevView!= null)

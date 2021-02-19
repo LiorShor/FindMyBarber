@@ -27,7 +27,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
 
     private final List<Book> mBookings;
     private final FragmentActivity mFragmentActivity;
-
+    private String time;
     public BookAdapter(List<Book> mBookings, FragmentActivity mFragmentActivity) {
         this.mBookings = mBookings;
         this.mFragmentActivity = mFragmentActivity;
@@ -75,7 +75,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         bookAgain.setOnClickListener(view -> {
             GetNextSlot getNextSlot= new GetNextSlot(holder.context, store.getID());
             try {
-                String time = getNextSlot.execute().get();
+                time = getNextSlot.execute().get();
                 textView.setText("Would you like to book an appointment in "+ store.getName() + " at " + time + "?");
                 dialog.show();
             } catch (ExecutionException | InterruptedException e) {
@@ -100,39 +100,31 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         });
 
         bookNow.setOnClickListener(view -> {
-            GetNextSlot getNextSlot= new GetNextSlot(holder.context, store.getID());
-            try {
-                String totalTime = getNextSlot.execute().get();
-                String date = totalTime.split(",", 2)[0];
-                String time = totalTime.split(",", 2)[1];
+                String date = time.split(",", 2)[0];
+                String time = this.time.split(",", 2)[1];
                 String minutes = time.split(":", 2)[1];
                 String hours = time.split(":", 2)[0];
                 StringBuilder stringBuilder = new StringBuilder(hours);
                 stringBuilder.deleteCharAt(0);
                 String year = date.split("/", 3)[2];
-                String month = date.split("/", 3)[1];
-                String dayOfMonth = date.split("/", 3)[0];
+                String dayOfMonth = date.split("/", 3)[1];
+                String month = date.split("/", 3)[0];
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(dayOfMonth));
                 calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(stringBuilder.toString()));
                 calendar.set(Calendar.MINUTE, Integer.parseInt(minutes));
                 calendar.set(Calendar.SECOND, 0);
                 SharedPreferences sharedPreferences;
                 sharedPreferences = mFragmentActivity.getSharedPreferences("CurrentUserPref", MODE_PRIVATE);
                 UUID id = UUID.randomUUID();
+                calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(dayOfMonth));
                 String userEmail = Login.adminsList.stream().filter(user -> user.getStoreID().equals(store.getID())).findFirst().get().getUserEmail();
                 Book book1 = new Book(id.toString(), store.getID(), sharedPreferences.getString("KeyUser",null), userEmail, calendar);
                 bookingsList.add(book1);
                 mBookings.add(book1);
-                MainActivity mainActivity = (MainActivity) mFragmentActivity;
-                assert mainActivity != null;
                 MainActivity.postBookAppointment(holder.context,book1);
-                Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
+                Toast.makeText(holder.context, "New meeting has been created at: "+ time, Toast.LENGTH_LONG).show();
                 dialog.dismiss();
                 notifyItemInserted(getItemCount());
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
         });
     }
 
