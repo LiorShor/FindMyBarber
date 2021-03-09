@@ -88,7 +88,7 @@ public class BarberSearch extends Fragment {
         }
         RecyclerView recyclerView = view.findViewById(R.id.storeslist);
         storesList.sort((s1, s2) -> Double.compare(s1.getDistance(), s2.getDistance()));
-        StoreAdapter adapter = new StoreAdapter(getActivity(), storesList);
+        StoreAdapter adapter = new StoreAdapter(getActivity(), storesList,getContext());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(linearLayoutManager);

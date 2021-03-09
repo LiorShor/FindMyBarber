@@ -1,11 +1,8 @@
 package com.findmybarber.model;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +10,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
-import com.findmybarber.view.fragments.ActionMe;
-
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Stream;
-
 import static android.content.Context.MODE_PRIVATE;
 import static com.findmybarber.view.activities.MainActivity.bookingsList;
 
@@ -36,7 +27,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
 
     private final List<Book> mBookings;
     private final FragmentActivity mFragmentActivity;
-
+    private String time;
     public BookAdapter(List<Book> mBookings, FragmentActivity mFragmentActivity) {
         this.mBookings = mBookings;
         this.mFragmentActivity = mFragmentActivity;
@@ -46,7 +37,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         private final View itemView;
         public TextView storeName;
         public TextView description;
-        private Context context;
+        private final Context context;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -84,7 +75,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         bookAgain.setOnClickListener(view -> {
             GetNextSlot getNextSlot= new GetNextSlot(holder.context, store.getID());
             try {
-                String time = getNextSlot.execute().get();
+                time = getNextSlot.execute().get();
                 textView.setText("Would you like to book an appointment in "+ store.getName() + " at " + time + "?");
                 dialog.show();
             } catch (ExecutionException | InterruptedException e) {
@@ -94,15 +85,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
 
         anotherDate.setOnClickListener(view -> {
             MainActivity mainActivity = (MainActivity) mFragmentActivity;
-            mainActivity.loadStoreDetails();
             SharedPreferences sharedPreferences;
             sharedPreferences = mFragmentActivity.getSharedPreferences("store", MODE_PRIVATE);
-            sharedPreferences = mFragmentActivity.getSharedPreferences("KeyUser", MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("storeName", store.getName());
             editor.putString("storeID", store.getID());
             editor.apply();
             dialog.dismiss();
+            mainActivity.loadStoreDetails();
         });
 
         imageView.setOnClickListener(view -> {
@@ -110,39 +100,31 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         });
 
         bookNow.setOnClickListener(view -> {
-            GetNextSlot getNextSlot= new GetNextSlot(holder.context, store.getID());
-            try {
-                String totalTime = getNextSlot.execute().get();
-                String date = totalTime.split(",", 2)[0];
-                String time = totalTime.split(",", 2)[1];
+                String date = time.split(",", 2)[0];
+                String time = this.time.split(",", 2)[1];
                 String minutes = time.split(":", 2)[1];
                 String hours = time.split(":", 2)[0];
                 StringBuilder stringBuilder = new StringBuilder(hours);
                 stringBuilder.deleteCharAt(0);
                 String year = date.split("/", 3)[2];
-                String month = date.split("/", 3)[1];
-                String dayOfMonth = date.split("/", 3)[0];
+                String dayOfMonth = date.split("/", 3)[1];
+                String month = date.split("/", 3)[0];
                 Calendar calendar = Calendar.getInstance();
-                calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(dayOfMonth));
                 calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(stringBuilder.toString()));
                 calendar.set(Calendar.MINUTE, Integer.parseInt(minutes));
                 calendar.set(Calendar.SECOND, 0);
                 SharedPreferences sharedPreferences;
                 sharedPreferences = mFragmentActivity.getSharedPreferences("CurrentUserPref", MODE_PRIVATE);
                 UUID id = UUID.randomUUID();
+                calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(dayOfMonth));
                 String userEmail = Login.adminsList.stream().filter(user -> user.getStoreID().equals(store.getID())).findFirst().get().getUserEmail();
                 Book book1 = new Book(id.toString(), store.getID(), sharedPreferences.getString("KeyUser",null), userEmail, calendar);
                 bookingsList.add(book1);
                 mBookings.add(book1);
-                MainActivity mainActivity = (MainActivity) mFragmentActivity;
-                assert mainActivity != null;
-                mainActivity.postBookAppointment(book1);
-                Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
+                MainActivity.postBookAppointment(holder.context,book1);
+                Toast.makeText(holder.context, "New meeting has been created at: "+ time, Toast.LENGTH_LONG).show();
                 dialog.dismiss();
                 notifyItemInserted(getItemCount());
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
         });
     }
 

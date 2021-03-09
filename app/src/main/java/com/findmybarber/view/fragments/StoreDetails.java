@@ -86,14 +86,14 @@ public class StoreDetails extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_store_details, container, false);
         TextView textView = view.findViewById(R.id.storeName);
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("store", MODE_PRIVATE);
-            SharedPreferences sharedBookPreferences = getActivity().getSharedPreferences("book", MODE_PRIVATE);
-            SharedPreferences sharedUserPreferences = getActivity().getSharedPreferences("CurrentUserPref", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("store", MODE_PRIVATE);
+        SharedPreferences sharedBookPreferences = getActivity().getSharedPreferences("book", MODE_PRIVATE);
+        SharedPreferences sharedUserPreferences = getActivity().getSharedPreferences("CurrentUserPref", MODE_PRIVATE);
         textView.setText(sharedPreferences.getString("storeName", null));
         storeID = sharedPreferences.getString("storeID", null);
         Button createAppointment = view.findViewById(R.id.makeAppointment);
         GridView gridview = view.findViewById(R.id.gridview);
-        gridview.setAdapter(new ButtonAdapter(getContext(),takenTimeSlots));
+        gridview.setAdapter(new ButtonAdapter(getContext(), takenTimeSlots));
         gridview.setNumColumns(4);
         CompactCalendarView compactCalendarView = view.findViewById(R.id.compactcalendar_view);
         compactCalendarView.setUseThreeLetterAbbreviation(true);
@@ -111,12 +111,12 @@ public class StoreDetails extends Fragment {
 //                List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 calendar.setTimeInMillis(dateClicked.getTime());
                 takenTimeSlots.clear();
-                for (Book book:bookingsList) {
-                    if(book.getDate().equals(dateFormatForDate.format(dateClicked)))
+                for (Book book : bookingsList) {
+                    if (book.getDate().equals(dateFormatForDate.format(dateClicked)))
                         takenTimeSlots.add(book.getTime().toString());
                 }
-                gridview.setAdapter(new ButtonAdapter(getContext(),takenTimeSlots));
-                            }
+                gridview.setAdapter(new ButtonAdapter(getContext(), takenTimeSlots));
+            }
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
@@ -127,30 +127,30 @@ public class StoreDetails extends Fragment {
             String storeName = sharedPreferences.getString("storeName", null);
             String clientEmail = sharedUserPreferences.getString("KeyUser", null);
             String time = sharedBookPreferences.getString("timeSlot", null);
-            String hour = time.split(":",2)[0];
-            String minute = time.split(":",2)[1];
+            String hour = time.split(":", 2)[0];
+            String minute = time.split(":", 2)[1];
             Admin admin = null;
-            for (Admin admin1:Login.adminsList) {
-                if(admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))
+            for (Admin admin1 : Login.adminsList) {
+                if (admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))
                     admin = admin1;
             }
             assert admin != null;
             String storeEmail = admin.getUserEmail();
-            SyncEvent(1,1,"Appointment at "+ storeName,System.currentTimeMillis(),
-                    "You have a new apppointment at "+ storeName + "\nDon't be late !!!");
-            addAttendees(admin.getUserEmail(),admin.getUserName() +" "+ admin.getUserSurname());
+            SyncEvent(1, 1, "Appointment at " + storeName, System.currentTimeMillis(),
+                    "You have a new apppointment at " + storeName + "\nDon't be late !!!");
+            addAttendees(admin.getUserEmail(), admin.getUserName() + " " + admin.getUserSurname());
 
             calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
             calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
             calendar.set(Calendar.SECOND, 0);
 
             UUID id = UUID.randomUUID();
-            Book book = new Book(id.toString(), storeID , clientEmail, storeEmail,calendar);
+            Book book = new Book(id.toString(), storeID, clientEmail, storeEmail, calendar);
             MainActivity mainActivity = (MainActivity) getActivity();
             bookingsList.add(book);
             assert mainActivity != null;
-            MainActivity.postBookAppointment(getContext(),book);
-            Toast.makeText(mainActivity, "New meeting has been created at: "+ time, Toast.LENGTH_SHORT).show();
+            MainActivity.postBookAppointment(getContext(), book);
+            Toast.makeText(mainActivity, "New meeting has been created at: " + time, Toast.LENGTH_SHORT).show();
             mainActivity.onBackPressed();
         });
         return view;
