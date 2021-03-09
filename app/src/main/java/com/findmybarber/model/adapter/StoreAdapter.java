@@ -98,7 +98,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
                     callNow.setOnClickListener(view1 -> {
                         Intent callIntent = new Intent(Intent.ACTION_CALL);
                         callIntent.setData(Uri.parse("tel:" + phoneNumber));//change the number
-                        mFragmentActivity.getApplicationContext().startActivity(callIntent);
+                        context.startActivity(callIntent);
                     });
                     Button cancel = callDialog.findViewById(R.id.cancel);
                     cancel.setOnClickListener(view1 -> callDialog.dismiss());
