@@ -1,8 +1,8 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
 import android.os.AsyncTask;
 
-import java.util.List;
+import com.findmybarber.controller.asynctask.APIReader;
 
 public class EditUserProfile extends AsyncTask<Void, Void, Void> {
 
@@ -18,7 +18,7 @@ public class EditUserProfile extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        String url = "http://192.168.1.2:45455/api/user/EditUserProfile/" + userEmail + "/" + firstName + "/" + lastName;
+        String url = "http://192.168.1.27:45455/api/user/EditUserProfile/" + userEmail + "/" + firstName + "/" + lastName;
         APIReader http = new APIReader();
         http.getHTTPData(url);
         return null;

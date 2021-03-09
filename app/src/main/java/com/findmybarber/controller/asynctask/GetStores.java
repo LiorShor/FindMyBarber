@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
 import android.Manifest;
 import android.content.Context;
@@ -11,15 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-import com.findmybarber.view.activities.Login;
-import com.findmybarber.view.activities.MainActivity;
-import com.google.gson.Gson;
+import com.findmybarber.controller.asynctask.APIReader;
+import com.findmybarber.model.Store;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,8 +20,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static com.findmybarber.view.activities.Login.dbStoresList;
 
 public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     private final Context context;

@@ -35,7 +35,7 @@ import com.facebook.login.widget.LoginButton;
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Customer;
-import com.findmybarber.model.GetAdminList;
+import com.findmybarber.controller.asynctask.GetAdminList;
 import com.findmybarber.model.Registration;
 import com.findmybarber.model.Store;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -140,7 +140,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void getCustomersList() {
-        String url = "http://192.168.1.21:45455/api/user/getUserClientsList";
+        String url = "http://192.168.1.27:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {

@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
 import android.Manifest;
 import android.content.Context;

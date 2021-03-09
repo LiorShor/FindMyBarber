@@ -1,7 +1,8 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
 import android.content.Context;
 import android.os.AsyncTask;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
-import com.findmybarber.model.ButtonAdapter;
+import com.findmybarber.model.adapter.ButtonAdapter;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;

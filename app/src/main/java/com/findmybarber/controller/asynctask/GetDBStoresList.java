@@ -1,14 +1,9 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
 import android.os.AsyncTask;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-import com.findmybarber.view.activities.Login;
+import com.findmybarber.controller.asynctask.APIReader;
+import com.findmybarber.model.Store;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -18,13 +13,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.findmybarber.view.activities.Login.dbStoresList;
-
 public class GetDBStoresList  extends AsyncTask<Void, Void, List<Store>> {
 
     @Override
     protected List<Store> doInBackground(Void... voids) {
-        String url = "http://192.168.1.2:45455/api/store/getStoresList";
+        String url = "http://192.168.1.27:45455/api/store/getStoresList";
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
         List<Store> storesList = new ArrayList<>();

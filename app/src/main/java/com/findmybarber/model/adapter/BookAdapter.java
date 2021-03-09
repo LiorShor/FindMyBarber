@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.model.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
+import com.findmybarber.controller.asynctask.GetNextSlot;
+import com.findmybarber.model.Book;
+import com.findmybarber.model.Store;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 import java.util.Calendar;

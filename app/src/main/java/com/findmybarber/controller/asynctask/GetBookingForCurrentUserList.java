@@ -1,32 +1,45 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+
+import com.findmybarber.controller.asynctask.APIReader;
+import com.findmybarber.model.Book;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class GetBookingList extends AsyncTask<Void, Void, List<Book>> {
-    private final String storeID;
+import static android.content.Context.MODE_PRIVATE;
 
-    public GetBookingList(String storeID) {
-        this.storeID = storeID;
+public class GetBookingForCurrentUserList extends AsyncTask<Void, Void, List<Book>> {
+
+    private final Context context;
+
+    public GetBookingForCurrentUserList(final Context context){
+        this.context = context;
     }
 
     @Override
     protected List<Book> doInBackground(Void... voids) {
-        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
+        SharedPreferences sharedUserPreferences = context.getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+        String email = sharedUserPreferences.getString("KeyUser", null);
+        email = email.split(".com", 2)[0];
+        String url = "http://192.168.1.27:45455/api/book/getAppointmentsForCurrentUser/" + email ;
         APIReader http = new APIReader();
         String stream = http.getHTTPData(url);
-        List<Book> bookingsList = new ArrayList<>();
+        List<Book> userAppointmentsList = new ArrayList<>();
         try {
-            JSONArray jsonArray = new JSONArray(stream);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Gson gson = new Gson();
+            JSONArray object = new JSONArray(stream);
+            for (int i = 0; i < object.length(); i++) {
+                JSONObject jsonObject = object.getJSONObject(i);
                 String id = jsonObject.getString("ID");
                 String storeID = jsonObject.getString("StoreID");
                 String emailClient = jsonObject.getString("EmailClient");
@@ -44,9 +57,9 @@ public class GetBookingList extends AsyncTask<Void, Void, List<Book>> {
                 calendar.set(Calendar.SECOND, 0);
                 calendar.set(year, month-1, dayOfMonth);
                 Book book = new Book(id,storeID,emailClient,emailStore,calendar);
-                bookingsList.add(book);
+                userAppointmentsList.add(book);
             }
-            return bookingsList;
+            return userAppointmentsList;
         }
         catch (JSONException e)
         {

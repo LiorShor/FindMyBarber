@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.model.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,10 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import com.findmybarber.R;
+import com.findmybarber.controller.asynctask.GetStorePhone;
+import com.findmybarber.model.Store;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 

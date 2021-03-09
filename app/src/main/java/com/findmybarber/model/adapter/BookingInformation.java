@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.model.adapter;
 
 import java.sql.Timestamp;
 

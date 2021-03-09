@@ -1,6 +1,5 @@
 package com.findmybarber.view.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,12 +9,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.findmybarber.R;
-import com.findmybarber.model.BookAdapter;
-import com.findmybarber.model.GetBookingForCurrentUserList;
-import com.findmybarber.model.StoreAdapter;
+import com.findmybarber.model.adapter.BookAdapter;
+import com.findmybarber.controller.asynctask.GetBookingForCurrentUserList;
 import com.findmybarber.view.activities.MainActivity;
 
 import java.util.concurrent.ExecutionException;

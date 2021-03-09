@@ -1,14 +1,13 @@
-package com.findmybarber.model;
+package com.findmybarber.controller.asynctask;
 
 import android.os.AsyncTask;
 
+import com.findmybarber.controller.asynctask.APIReader;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 public class GetCoordinatesByAddress extends AsyncTask<Void, Void, String> {
 

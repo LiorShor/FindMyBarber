@@ -1,6 +1,5 @@
 package com.findmybarber.view.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,17 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.findmybarber.R;
-import com.findmybarber.model.AddStore;
-import com.findmybarber.model.Customer;
-import com.findmybarber.model.GetCoordinatesByAddress;
+import com.findmybarber.controller.asynctask.AddStore;
+import com.findmybarber.controller.asynctask.GetCoordinatesByAddress;
 import com.findmybarber.model.Store;
-import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.

@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,13 +17,9 @@ import android.widget.Toast;
 import com.findmybarber.R;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Customer;
-import com.findmybarber.model.EditUserProfile;
-import com.findmybarber.model.User;
-import com.findmybarber.model.UserType;
+import com.findmybarber.controller.asynctask.EditUserProfile;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
-
-import java.util.concurrent.ExecutionException;
 
 import static android.content.Context.MODE_PRIVATE;
 

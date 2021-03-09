@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.model.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -19,6 +19,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.R;
+import com.findmybarber.model.Book;
+import com.findmybarber.model.Customer;
+import com.findmybarber.model.User;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.fragments.AdminManagement;
 import org.json.JSONException;

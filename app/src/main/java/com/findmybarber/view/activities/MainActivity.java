@@ -9,7 +9,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,14 +28,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.findmybarber.model.Admin;
 import com.findmybarber.model.Customer;
@@ -44,19 +41,15 @@ import com.findmybarber.model.Store;
 import com.findmybarber.view.fragments.About;
 import com.findmybarber.view.fragments.EditProfile;
 import com.findmybarber.R;
-import com.findmybarber.model.Admin;
 import com.findmybarber.model.Book;
-import com.findmybarber.view.fragments.ActionFavorites;
 import com.findmybarber.view.fragments.ActionMe;
 import com.findmybarber.view.fragments.AddBarber;
-import com.findmybarber.model.GetStorePhone;
-import com.findmybarber.model.Store;
+import com.findmybarber.controller.asynctask.GetStorePhone;
 import com.findmybarber.view.fragments.AdminManagement;
 import com.findmybarber.view.fragments.StoreDetails;
 import com.findmybarber.view.fragments.BarberSearch;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,10 +57,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
@@ -129,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                     editor.putString("StoreID",userAdmin.getStoreID());
                     editor.apply();
                     loadAdminManagement();
-
+                    bottomNav.setVisibility(View.INVISIBLE);
                 }
                 else{
                     loadFirstFragment();
@@ -222,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.21:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -265,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void postBookAppointment(Context context,Book book){
-        String postUrl = "http://192.168.1.21:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {

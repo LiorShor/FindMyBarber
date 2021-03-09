@@ -8,12 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.findmybarber.R;
-import com.findmybarber.model.GetDBStoresList;
-import com.findmybarber.model.GetStores;
+import com.findmybarber.controller.asynctask.GetDBStoresList;
+import com.findmybarber.controller.asynctask.GetStores;
 import com.findmybarber.model.Store;
-import com.findmybarber.model.StoreAdapter;
-import com.findmybarber.view.activities.Login;
-import com.findmybarber.view.activities.MainActivity;
+import com.findmybarber.model.adapter.StoreAdapter;
 
 import java.util.ArrayList;
 import java.util.List;

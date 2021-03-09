@@ -1,4 +1,4 @@
-package com.findmybarber.model;
+package com.findmybarber.model.adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -65,38 +65,36 @@ public class ButtonAdapter extends BaseAdapter
 
         if(convertView == null){
             grid = inflater.inflate(R.layout.timeslot, parent, false);
-            Button button = grid.findViewById(R.id.button); // get the reference of ImageView
-            button.setTextColor(Color.WHITE);
-            button.setText(timeSlots[position]);
-            if(takenTimeSlots.contains(button.getText().toString()+":00"))
-            {
-                button.setClickable(false);
-                button.setAlpha(.5f);
-                button.setEnabled(false);
-            }
-
-            button.setOnClickListener(view -> {
-                Log.d(TAG, "Position: "+position);
-                SharedPreferences sharedPreferences;
-                sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
-                if(prevView!= null)
-                {
-                    Button button1 = prevView.findViewById(R.id.button);
-                    button1.setBackgroundResource(R.drawable.timeslot);
-                    button1.setTextColor(Color.WHITE);
-                }
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("timeSlot", button.getText().toString());
-                prevView = view;
-                editor.apply();
-                button.setBackgroundResource(R.drawable.selectedtimeslot);
-                button.setTextColor(Color.RED);
-            });
-
         }else{
             grid = (View)convertView;
         }
+        Button button = grid.findViewById(R.id.button); // get the reference of ImageView
+        button.setTextColor(Color.WHITE);
+        button.setText(timeSlots[position]);
+        if(takenTimeSlots.contains(button.getText().toString()+":00"))
+        {
+            button.setClickable(false);
+            button.setAlpha(.5f);
+            button.setEnabled(false);
+        }
 
+        button.setOnClickListener(view -> {
+            Log.d(TAG, "Position: "+position);
+            SharedPreferences sharedPreferences;
+            sharedPreferences =  mContext.getSharedPreferences("book", MODE_PRIVATE);
+            if(prevView!= null)
+            {
+                Button button1 = prevView.findViewById(R.id.button);
+                button1.setBackgroundResource(R.drawable.timeslot);
+                button1.setTextColor(Color.WHITE);
+            }
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("timeSlot", button.getText().toString());
+            prevView = view;
+            editor.apply();
+            button.setBackgroundResource(R.drawable.selectedtimeslot);
+            button.setTextColor(Color.RED);
+        });
         return grid;
 
     }
