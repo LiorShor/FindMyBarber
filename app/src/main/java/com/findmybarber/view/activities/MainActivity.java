@@ -9,10 +9,12 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.EditText;
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: ");
         // Set a Toolbar to replace the ActionBar.
-
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         userPref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
 
 
@@ -147,12 +149,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_me:
                 selectedFragment = new ActionMe();
                 break;
-            case R.id.action_favorites:
+/*            case R.id.action_favorites:
                 selectedFragment = new ActionFavorites();
-                break;
+                break;*/
             case R.id.action_home:
                 if(checkIfAdmin(userPref.getString("KeyUser",null))) {
-                    selectedFragment = new StoreDetails();
+                    selectedFragment = new AdminManagement();
                 }
                 else {
                     selectedFragment = new BarberSearch();
@@ -164,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.flContent, selectedFragment)
+                .addToBackStack(null)
                 .commit();
         return true;
     };
@@ -187,11 +190,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Fragment f = getVisibleFragment();
-        if(!(f instanceof BarberSearch))
-            if(checkIfAdmin(currUser))
-                this.moveTaskToBack(true);
-            else
-                super.onBackPressed();
+        if(!(f instanceof BarberSearch) && !(f instanceof AdminManagement) )
+//            if(checkIfAdmin(currUser))
+//                this.moveTaskToBack(true);
+//            else
+        {
+            super.onBackPressed();
+            this.moveTaskToBack(false);
+        }
         else
             this.moveTaskToBack(true);
     }
@@ -216,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.2:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.21:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -259,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void postBookAppointment(Context context,Book book){
-        String postUrl = "http://192.168.1.2:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.21:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {
@@ -329,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.flContent, fragment)
+                        .addToBackStack(null)
                         .commit();
             }
 
@@ -383,6 +390,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void SearchStore(View view) {
         searchText = findViewById(R.id.searchText);
+
         String storeName = searchText.getText().toString().toLowerCase();
         Store store = Login.dbStoresList.stream().filter(store1 -> store1.getName().toLowerCase().equals(storeName)).findAny().orElse(null);
         if(store == null) { //Search in Google API
