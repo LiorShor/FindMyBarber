@@ -7,12 +7,12 @@
         android:icon="@drawable/icon_home"
         android:title="Home"
         app:showAsAction="ifRoom" />
-    <item
+<!--    <item
         android:id="@+id/action_favorites"
         android:enabled="true"
         android:icon="@drawable/icon_favorites"
         android:title="Favorites"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />-->
     <item
         android:id="@+id/action_me"
         android:enabled="true"

@@ -95,11 +95,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE},1);
         }
-
         getCustomersList();
         GetAdminList getAdminList = new GetAdminList();
         try {
@@ -142,7 +140,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     public void getCustomersList() {
-        String url = "http://192.168.1.27:45455/api/user/getUserClientsList";
+        String url = "http://192.168.1.21:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {

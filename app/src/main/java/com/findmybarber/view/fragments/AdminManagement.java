@@ -200,8 +200,8 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
                     bookingListForDay.add(book);
 
                     MainActivity.postBookAppointment(getContext(),book);
-                    adapter.notifyItemInserted(bookingListForDay.size());
-                    updateCompactCalendarView();
+                    updateList();
+                    adapter.notifyDataSetChanged();
                     createAppointment.dismiss();
                 }
             });
@@ -263,6 +263,7 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
                 bookingListForDay.add(book);
             }
         }
+        updateCompactCalendarView();
     }
 
     @Override

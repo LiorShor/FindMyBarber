@@ -33,8 +33,12 @@ public class GetStorePhone extends AsyncTask<Void, Void, String> {
         try{
             JSONObject object = new JSONObject(stream);
             JSONArray jsonMainArray = object.getJSONArray("results");
-            JSONObject jsonObject = jsonMainArray.getJSONObject(0);
-             placeID =  jsonObject.getString("place_id");
+//            JSONObject jsonObject = jsonMainArray.getJSONObject(0);
+            for (int i = 0; i < jsonMainArray.length(); i++) {
+                JSONObject jsonObject =jsonMainArray.getJSONObject(i);
+                if(jsonObject.getString("name").equals(keywords))
+                    placeID =  jsonObject.getString("place_id");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
