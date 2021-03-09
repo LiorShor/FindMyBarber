@@ -152,6 +152,8 @@ public class EditProfile extends Fragment {
                 editUserProfile.execute();
                 mainActivity.loadBarberSearch();
                 Toast.makeText(getContext(), "Your name has been changed successfully", Toast.LENGTH_SHORT).show();
+                TextView navHeaderUserFullName = mainActivity.findViewById(R.id.textHeader);
+                navHeaderUserFullName.setText("Hello " + txtFirstName + " " + txtLastName);
             }
         });
 
