@@ -96,7 +96,7 @@ public class ActionMe extends Fragment {
             }
         }
         MainActivity.appointmentsForUserList.removeAll(previousMeetings);
-        BookAdapter adapter = new BookAdapter(MainActivity.appointmentsForUserList, getActivity());
+        BookAdapter1 adapter = new BookAdapter1(MainActivity.appointmentsForUserList, getActivity(),null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
         recyclerView.setAdapter(adapter);

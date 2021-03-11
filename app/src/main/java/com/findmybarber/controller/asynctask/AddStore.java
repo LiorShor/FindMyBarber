@@ -16,7 +16,7 @@ public class AddStore extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... voids) {
-        String url = "http://192.168.1.27:45455/api/store/addStore/" + emailClient + "/" + store.getID() + "/" + store.getName() + "/" + store.getAddress() + "/" + store.getDescription() + "/" + store.getPhoneNumber() + "/" + store.getLatitude() + "/" + store.getLongitude() + "/";
+        String url = "http://192.168.1.21:45455/api/store/addStore/" + emailClient + "/" + store.getID() + "/" + store.getName() + "/" + store.getAddress() + "/" + store.getDescription() + "/" + store.getPhoneNumber() + "/" + store.getLatitude() + "/" + store.getLongitude() + "/";
         APIReader http = new APIReader();
         http.getHTTPData(url);
         return null;

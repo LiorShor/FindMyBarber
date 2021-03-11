@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import static android.content.Context.MODE_PRIVATE;
+import static com.findmybarber.model.adapter.BookAdapter1.createNotificationChannel;
+import static com.findmybarber.model.adapter.BookAdapter1.setNotification;
 import static com.findmybarber.view.activities.MainActivity.bookingsList;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
@@ -125,12 +127,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
             bookingsList.add(book1);
             mBookings.add(book1);
             MainActivity.postBookAppointment(holder.context, book1);
-            Toast.makeText(holder.context, "New meeting has been created at: " + time, Toast.LENGTH_LONG).show();
+            createNotificationChannel(holder.context);
+            setNotification(time, holder.context);
+//            Toast.makeText(holder.context, "New meeting has been created at: " + time, Toast.LENGTH_LONG).show();
+            notifyItemInserted(getItemCount());
             dialog.dismiss();
-                notifyItemInserted(getItemCount());
+
         });
     }
-
     @Override
     public int getItemCount() {
         return mBookings.size();

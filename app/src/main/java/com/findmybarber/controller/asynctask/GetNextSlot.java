@@ -16,7 +16,7 @@ public class GetNextSlot extends AsyncTask<Void, Void, String> {
 
     @Override
     protected String doInBackground(Void... voids) {
-        String url = "http://192.168.1.27:45455/api/book/getFreeUpcomingTimeSlot/" + storeID ;
+        String url = "http://192.168.1.21:45455/api/book/getFreeUpcomingTimeSlot/" + storeID ;
         APIReader http = new APIReader();
         String str = http.getHTTPData(url);
         StringBuilder build = new StringBuilder(str);

@@ -49,8 +49,8 @@ public class GetStores extends AsyncTask<Void, Void, List<Store>> {
     protected List<Store> doInBackground(Void... params) {
         List<Store> storesList = new ArrayList<>();
         String stream = "";
-        APIReader http = new APIReader();
-        stream = http.getHTTPData(urlString);
+/*        APIReader http = new APIReader();
+        stream = http.getHTTPData(urlString);*/
         try {
 
             JSONObject object = new JSONObject(stream);

@@ -40,11 +40,14 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.ViewHolder> 
     private final List<Book> mBookings;
     private final FragmentActivity mFragmentActivity;
     private String time;
-    private BookAdapter adapter;
-    public BookAdapter1(List<Book> mBookings, FragmentActivity mFragmentActivity,BookAdapter adapter) {
+    private BookAdapter1 adapter;
+    private boolean flag = false;
+    public BookAdapter1(List<Book> mBookings, FragmentActivity mFragmentActivity,BookAdapter1 adapter) {
         this.mBookings = mBookings;
         this.mFragmentActivity = mFragmentActivity;
         this.adapter = adapter;
+        if (adapter != null)
+            flag = true;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -136,11 +139,13 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.ViewHolder> 
             bookingsList.add(book1);
             MainActivity.postBookAppointment(holder.context, book1);
             MainActivity.appointmentsForUserList.add(book1);
-            adapter.notifyItemInserted(MainActivity.appointmentsForUserList.size());
-//            Toast.makeText(holder.context, "New meeting has been created at: " + time, Toast.LENGTH_LONG).show();
             createNotificationChannel(holder.context);
             setNotification(time,holder.context);
-
+//            Toast.makeText(holder.context, "New meeting has been created at: " + time, Toast.LENGTH_LONG).show();
+            if(flag)
+                adapter.notifyItemInserted(MainActivity.appointmentsForUserList.size());
+            else
+                notifyItemInserted(getItemCount());
             dialog.dismiss();
 
         });
@@ -160,22 +165,22 @@ public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.ViewHolder> 
         return null;
     }
 
-    public void setNotification(String time,Context context){
+    public static void setNotification(String time,Context context){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"FindMyBarberA")
         .setSmallIcon(R.drawable.com_facebook_button_icon)
         .setContentTitle("FindMyBarber")
         .setContentText("New meeting has been created at: " + time)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        .setPriority(NotificationCompat.PRIORITY_HIGH);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(100,builder.build());
     }
-    private void createNotificationChannel(Context context) {
+    public static void createNotificationChannel(Context context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = "FindMyBarber Channel";
             String description = "Channel for FindMyBarber notifications";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel channel = new NotificationChannel("FindMyBarberA", name, importance);
             channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
