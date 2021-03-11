@@ -1,8 +1,11 @@
 package com.findmybarber.model.adapter;
 
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,30 +13,38 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.findmybarber.R;
 import com.findmybarber.controller.asynctask.GetNextSlot;
 import com.findmybarber.model.Book;
 import com.findmybarber.model.Store;
 import com.findmybarber.view.activities.Login;
 import com.findmybarber.view.activities.MainActivity;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+
 import static android.content.Context.MODE_PRIVATE;
 import static com.findmybarber.view.activities.MainActivity.bookingsList;
 
-public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
+public class BookAdapter1 extends RecyclerView.Adapter<BookAdapter1.ViewHolder> {
 
     private final List<Book> mBookings;
     private final FragmentActivity mFragmentActivity;
     private String time;
-    public BookAdapter(List<Book> mBookings, FragmentActivity mFragmentActivity) {
+    private BookAdapter adapter;
+    public BookAdapter1(List<Book> mBookings, FragmentActivity mFragmentActivity,BookAdapter adapter) {
         this.mBookings = mBookings;
         this.mFragmentActivity = mFragmentActivity;
+        this.adapter = adapter;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -123,11 +134,15 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
             String userEmail = Login.adminsList.stream().filter(user -> user.getStoreID().equals(store.getID())).findFirst().get().getUserEmail();
             Book book1 = new Book(id.toString(), store.getID(), sharedPreferences.getString("KeyUser", null), userEmail, calendar);
             bookingsList.add(book1);
-            mBookings.add(book1);
             MainActivity.postBookAppointment(holder.context, book1);
-            Toast.makeText(holder.context, "New meeting has been created at: " + time, Toast.LENGTH_LONG).show();
+            MainActivity.appointmentsForUserList.add(book1);
+            adapter.notifyItemInserted(MainActivity.appointmentsForUserList.size());
+//            Toast.makeText(holder.context, "New meeting has been created at: " + time, Toast.LENGTH_LONG).show();
+            createNotificationChannel(holder.context);
+            setNotification(time,holder.context);
+
             dialog.dismiss();
-                notifyItemInserted(getItemCount());
+
         });
     }
 
@@ -145,4 +160,28 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.ViewHolder> {
         return null;
     }
 
+    public void setNotification(String time,Context context){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"FindMyBarberA")
+        .setSmallIcon(R.drawable.com_facebook_button_icon)
+        .setContentTitle("FindMyBarber")
+        .setContentText("New meeting has been created at: " + time)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        notificationManager.notify(100,builder.build());
+    }
+    private void createNotificationChannel(Context context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "FindMyBarber Channel";
+            String description = "Channel for FindMyBarber notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("FindMyBarberA", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 }

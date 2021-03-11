@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/card_style"
         app:cardElevation="8dp"
-            app:cardCornerRadius="45dp">
+        app:cardCornerRadius="45dp">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

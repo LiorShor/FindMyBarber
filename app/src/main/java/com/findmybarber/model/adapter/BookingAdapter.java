@@ -149,7 +149,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
     }
 
     public static void RemoveFromDBPost(Context context, Book book){
-        String postUrl = "http://192.168.1.27:45455/api/Book/removeAppointment";
+        String postUrl = "http://192.168.1.21:45455/api/Book/removeAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {
@@ -166,7 +166,7 @@ public class BookingAdapter extends RecyclerView.Adapter<BookingAdapter.ViewHold
         requestQueue.add(jsonObjectRequest);
     }
     public static void EditDBPost(Context context, Book book){
-        String postUrl = "http://192.168.1.27:45455/api/Book/editBookingAppointment";
+        String postUrl = "http://192.168.1.21:45455/api/Book/editBookingAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {

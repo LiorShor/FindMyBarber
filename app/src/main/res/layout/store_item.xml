@@ -58,17 +58,22 @@
         app:layout_constraintVertical_bias="0.073" />
 
     <Button
+
         android:id="@+id/bookNow"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_marginBottom="4dp"
+        android:background="@drawable/ripple_effect_raised"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:text="@string/book_now"
+        android:textColor="#1973A7"
         android:textSize="12sp"
+        android:layout_marginEnd="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        android:text="@string/book_now"/>
+        app:layout_constraintVertical_bias="0.7" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

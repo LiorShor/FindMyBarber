@@ -121,26 +121,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         loginDialog = new Dialog(this,R.style.PauseDialog);
         loginDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         findViewById(R.id.sign_in_with_google).setOnClickListener(this);
-
-        Dexter.withActivity(this).withPermissions(Manifest.permission.READ_CALENDAR,
-                Manifest.permission.WRITE_CALENDAR).withListener(new MultiplePermissionsListener() {
-            @Override
-            public void onPermissionsChecked(MultiplePermissionsReport report) {
-                AccessToken accessToken = AccessToken.getCurrentAccessToken();
-                if(accessToken!=null)
-                {
-                    //TODO:: need to transfer from activity to another in case of succsess on permissions
-                }
-            }
-
-            @Override
-            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-            }
-        }).check();
     }
 
     public void getCustomersList() {
-        String url = "http://192.168.1.27:45455/api/user/getUserClientsList";
+        String url = "http://192.168.1.21:45455/api/user/getUserClientsList";
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -289,20 +273,19 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         EditText passwordText = loginDialog.findViewById(R.id.etLoginPassword);
         String password = passwordText.getText().toString();
         if(!checkIfEmpty(password,email) && checkCredentials(email, password)) {
-            pref = getApplicationContext().getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
+            pref = getApplicationContext().getSharedPreferences("CurrentUserPref", MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
-                editor.putString("KeyUser",email);
-                editor.putString("KeyPassword",password);
-                editor.apply();
-
+            editor.putString("KeyUser", email);
+            editor.putString("KeyPassword", password);
+            editor.apply();
             Intent intent = new Intent(Login.this, MainActivity.class);
             startActivity(intent);
         }
         else {
-            emailText.setBackgroundResource(R.drawable.red_error_style);
-            passwordText.setBackgroundResource(R.drawable.red_error_style);
+                emailText.setBackgroundResource(R.drawable.red_error_style);
+                passwordText.setBackgroundResource(R.drawable.red_error_style);
+            }
         }
-    }
 
     private boolean checkCredentials(String email, String password) {
         return  adminsList.stream().anyMatch(user -> user.getUserEmail().equals(email) && user.getUserPassword().equals(password))

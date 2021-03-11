@@ -24,7 +24,7 @@
         tools:ignore="AllowBackup">
 <!--        <activity android:name=".activities.Navigator"></activity>-->
 <!--         <activity android:name="com.findmybarber.view.activities.MainActivity" />-->
-         <activity android:name=".view.activities.LocationPermission" />
+         <activity android:name=".view.activities.CheckPermissions" />
          <activity android:name=".view.activities.Login" />
 
         <activity android:name=".view.activities.Navigator">

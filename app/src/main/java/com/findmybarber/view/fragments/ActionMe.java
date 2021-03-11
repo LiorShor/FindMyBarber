@@ -11,10 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.findmybarber.R;
+import com.findmybarber.model.Book;
 import com.findmybarber.model.adapter.BookAdapter;
 import com.findmybarber.controller.asynctask.GetBookingForCurrentUserList;
+import com.findmybarber.model.adapter.BookAdapter1;
 import com.findmybarber.view.activities.MainActivity;
 
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -67,7 +72,7 @@ public class ActionMe extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        MainActivity.appointmentsForUserList.removeAll(MainActivity.appointmentsForUserList);
+       MainActivity.appointmentsForUserList.clear();
         GetBookingForCurrentUserList getBookingForCurrentUserList= new GetBookingForCurrentUserList(getContext());
         try {
             MainActivity.appointmentsForUserList.addAll(getBookingForCurrentUserList.execute().get());
@@ -76,11 +81,30 @@ public class ActionMe extends Fragment {
         }
         View view = inflater.inflate(R.layout.fragment_action_me, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.bookingList);
+        RecyclerView recyclerViewUpcoming = view.findViewById(R.id.upcomingBookingList);
 //        MainActivity.appointmentsForUserList.sort((s1, s2) -> Double.compare(s1.getDate(), s2.getDate()));
+        Calendar calendar = Calendar.getInstance();
+        List<Book> previousMeetings = new LinkedList<>();
+        for (Book book : MainActivity.appointmentsForUserList) {
+            String year = book.getDate().split("-", 3)[0];
+            String dayOfMonth = book.getDate().split("-", 3)[2];
+            String month = book.getDate().split("-", 3)[1];
+            calendar.setTime(book.getTime());
+            calendar.set(Integer.parseInt(year), Integer.parseInt(month) - 1, Integer.parseInt(dayOfMonth));
+            if (calendar.getTime().before(Calendar.getInstance().getTime())) {
+                previousMeetings.add(book);
+            }
+        }
+        MainActivity.appointmentsForUserList.removeAll(previousMeetings);
         BookAdapter adapter = new BookAdapter(MainActivity.appointmentsForUserList, getActivity());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        BookAdapter1 adapter1 = new BookAdapter1(previousMeetings, getActivity(),adapter);
+        recyclerViewUpcoming.setAdapter(adapter1);
+        recyclerViewUpcoming.setLayoutManager(linearLayoutManager1);
         return view;
     }
 }

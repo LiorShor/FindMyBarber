@@ -57,6 +57,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private Dialog callDialog;
     private static final String TAG = "MainActivity";
     public static List<Book> bookingsList = new ArrayList<>();
-    public static List<Book> appointmentsForUserList = new ArrayList<>();
+    public static List<Book> appointmentsForUserList = new LinkedList<>();
     private NavigationView nvDrawer;
     private SharedPreferences userPref;
 
@@ -78,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate: ");
-        // Set a Toolbar to replace the ActionBar.
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         userPref = getSharedPreferences("CurrentUserPref",MODE_PRIVATE);
 
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getBookingList(String storeID) {
-        String url = "http://192.168.1.27:45455/api/book/getBookingList/" + storeID;
+        String url = "http://192.168.1.21:45455/api/book/getBookingList/" + storeID;
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void postBookAppointment(Context context,Book book){
-        String postUrl = "http://192.168.1.27:45455/api/book/bookAppointment";
+        String postUrl = "http://192.168.1.21:45455/api/book/bookAppointment";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JSONObject postData = new JSONObject();
         try {
