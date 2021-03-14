@@ -30,6 +30,8 @@ import java.util.UUID;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.provider.CalendarContract.*;
+import static com.findmybarber.model.adapter.BookAdapter.createNotificationChannel;
+import static com.findmybarber.model.adapter.BookAdapter.setNotification;
 import static com.findmybarber.view.activities.MainActivity.bookingsList;
 
 /**
@@ -108,9 +110,11 @@ public class StoreDetails extends Fragment {
             @Override
             public void onDayClick(Date dateClicked) {
                 currMonth.setText(dateFormatForMonth.format(dateClicked));
+                hideTimeStampIfDateIsEarly(dateClicked, gridview);
 //                List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 calendar.setTimeInMillis(dateClicked.getTime());
                 takenTimeSlots.clear();
+                AdminManagement.clearHistory(sharedBookPreferences, getActivity());
                 for (Book book : bookingsList) {
                     if (book.getDate().equals(dateFormatForDate.format(dateClicked)))
                         takenTimeSlots.add(book.getTime().toString());
@@ -124,38 +128,59 @@ public class StoreDetails extends Fragment {
             }
         });
         createAppointment.setOnClickListener(view1 -> {
-            String storeName = sharedPreferences.getString("storeName", null);
-            String clientEmail = sharedUserPreferences.getString("KeyUser", null);
-            String time = sharedBookPreferences.getString("timeSlot", null);
-            String hour = time.split(":", 2)[0];
-            String minute = time.split(":", 2)[1];
-            Admin admin = null;
-            for (Admin admin1 : Login.adminsList) {
-                if (admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))
-                    admin = admin1;
+            if (gridview.getVisibility() == View.VISIBLE) {
+                String storeName = sharedPreferences.getString("storeName", null);
+                String clientEmail = sharedUserPreferences.getString("KeyUser", null);
+                String time = sharedBookPreferences.getString("timeSlot", null);
+                String hour = time.split(":", 2)[0];
+                String minute = time.split(":", 2)[1];
+                Admin admin = null;
+                for (Admin admin1 : Login.adminsList) {
+                    if (admin1.getStoreID() != null && admin1.getStoreID().equals(storeID))
+                        admin = admin1;
+                }
+                assert admin != null;
+                String storeEmail = admin.getUserEmail();
+                SyncEvent(1, 1, "Appointment at " + storeName, System.currentTimeMillis(),
+                        "You have a new apppointment at " + storeName + "\nDon't be late !!!");
+                addAttendees(admin.getUserEmail(), admin.getUserName() + " " + admin.getUserSurname());
+
+                calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
+                calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
+                calendar.set(Calendar.SECOND, 0);
+
+                UUID id = UUID.randomUUID();
+                Book book = new Book(id.toString(), storeID, clientEmail, storeEmail, calendar);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                bookingsList.add(book);
+                assert mainActivity != null;
+                MainActivity.postBookAppointment(getContext(), book);
+                createNotificationChannel(getContext());
+                setNotification(time,getContext());
+//                Toast.makeText(mainActivity, "New meeting has been created at: " + time, Toast.LENGTH_SHORT).show();
+                mainActivity.onBackPressed();
             }
-            assert admin != null;
-            String storeEmail = admin.getUserEmail();
-            SyncEvent(1, 1, "Appointment at " + storeName, System.currentTimeMillis(),
-                    "You have a new apppointment at " + storeName + "\nDon't be late !!!");
-            addAttendees(admin.getUserEmail(), admin.getUserName() + " " + admin.getUserSurname());
-
-            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour));
-            calendar.set(Calendar.MINUTE, Integer.parseInt(minute));
-            calendar.set(Calendar.SECOND, 0);
-
-            UUID id = UUID.randomUUID();
-            Book book = new Book(id.toString(), storeID, clientEmail, storeEmail, calendar);
-            MainActivity mainActivity = (MainActivity) getActivity();
-            bookingsList.add(book);
-            assert mainActivity != null;
-            MainActivity.postBookAppointment(getContext(), book);
-            Toast.makeText(mainActivity, "New meeting has been created at: " + time, Toast.LENGTH_SHORT).show();
-            mainActivity.onBackPressed();
+            else
+                Toast.makeText(getActivity(), "Please choose correct time and date", Toast.LENGTH_SHORT).show();
         });
         return view;
     }
 
+    private void hideTimeStampIfDateIsEarly(Date dateClicked,GridView gridView){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.SECOND,0);
+        int dateClickedInMillis = (int) dateClicked.getTime();
+        int todaysDateInMillis = (int) calendar.getTimeInMillis();
+        dateClickedInMillis /= 10000;
+        todaysDateInMillis /= 10000;
+        if(todaysDateInMillis <= dateClickedInMillis)
+            gridView.setVisibility(View.VISIBLE);
+        else {
+            gridView.setVisibility(View.INVISIBLE);
+        }
+    }
     public void SyncEvent(long id, int meeting_id, String EventName,
                           long Stime, String Description) {
         Calendar cal = Calendar.getInstance();

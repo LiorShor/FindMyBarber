@@ -12,9 +12,8 @@ import android.view.ViewGroup;
 
 import com.findmybarber.R;
 import com.findmybarber.model.Book;
-import com.findmybarber.model.adapter.BookAdapter;
 import com.findmybarber.controller.asynctask.GetBookingForCurrentUserList;
-import com.findmybarber.model.adapter.BookAdapter1;
+import com.findmybarber.model.adapter.BookAdapter;
 import com.findmybarber.view.activities.MainActivity;
 
 import java.util.Calendar;
@@ -96,13 +95,13 @@ public class ActionMe extends Fragment {
             }
         }
         MainActivity.appointmentsForUserList.removeAll(previousMeetings);
-        BookAdapter1 adapter = new BookAdapter1(MainActivity.appointmentsForUserList, getActivity(),null);
+        BookAdapter adapter = new BookAdapter(MainActivity.appointmentsForUserList, getActivity(),null);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getContext());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        BookAdapter1 adapter1 = new BookAdapter1(previousMeetings, getActivity(),adapter);
+        BookAdapter adapter1 = new BookAdapter(previousMeetings, getActivity(),adapter);
         recyclerViewUpcoming.setAdapter(adapter1);
         recyclerViewUpcoming.setLayoutManager(linearLayoutManager1);
         return view;

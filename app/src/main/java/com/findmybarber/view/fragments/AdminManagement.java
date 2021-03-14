@@ -1,6 +1,7 @@
 package com.findmybarber.view.fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -162,7 +163,7 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
             createAppointment.setContentView(R.layout.invite_client_dialog);
             createAppointment.show();
             updateList();
-            clearHistory();
+            clearHistory(sharedBookPreferences,getActivity());
             takenTimeSlots.clear();
             createAppointment.setCanceledOnTouchOutside(true);
             GridView gridview = createAppointment.findViewById(R.id.gridview);
@@ -278,8 +279,8 @@ public class AdminManagement extends Fragment implements BookingAdapter.ItemCall
     {
         return Login.adminsList.stream().filter(admin1 -> admin1.getStoreID().equals(StoreID)).findFirst().orElse(null);
     }
-    public void clearHistory(){
-        sharedBookPreferences = getActivity().getSharedPreferences("book", MODE_PRIVATE);
+    public static void clearHistory(SharedPreferences sharedBookPreferences, Context context){
+        sharedBookPreferences = context.getSharedPreferences("book", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedBookPreferences.edit();
         editor.remove("timeSlot");
         editor.apply();
